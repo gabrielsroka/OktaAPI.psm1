@@ -86,10 +86,11 @@ function Invoke-PagedMethod($url) {
     if ($url -notMatch '^http') {$url = $baseUrl + $url}
     $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent
     $links = @{}
-    if ($response.Headers.link) { # Some searches (eg List Users with Search) do not support pagination.
+    if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
         foreach ($header in $response.Headers.Link.split(",")) {
-            $header -match '<(.*)>; rel="(.*)"'
-            $links[$matches[2]] = $matches[1]
+            if ($header -match '<(.*)>; rel="(.*)"') {
+                $links[$matches[2]] = $matches[1]
+            }
         }
     }
     @{objects = ConvertFrom-Json $response.content; nextUrl = $links.next}
