@@ -104,9 +104,9 @@ foreach ($id in $ids) {
 
 
 <#PSScriptInfo
-.VERSION 1.1.2
+.VERSION 1.1.3
 .GUID 33ca8742-b9bf-4824-9d86-605a8d627cb4
 .AUTHOR Gabriel Sroka
-.PROJECTURI https://github.com/gabrielsroka/gabrielsroka.github.io/tree/master/PowerShell
+.PROJECTURI https://github.com/gabrielsroka/OktaAPI.psm1
 .DESCRIPTION Call Okta API.
 #> 
