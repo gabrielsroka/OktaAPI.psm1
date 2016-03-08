@@ -8,6 +8,16 @@ function Connect-Okta($token, $baseUrl) {
     $script:baseUrl = "$baseUrl/api/v1"
 }
 
+# App functions - http://developer.okta.com/docs/api/resources/apps.html
+
+function Get-OktaAppUser($appid, $userid) {
+    Invoke-Method GET "/apps/$appid/users/$userid"
+}
+
+function Set-OktaAppUser($appid, $userid, $appuser) {
+    Invoke-Method POST "/apps/$appid/users/$userid" $appuser
+}
+
 # User functions - http://developer.okta.com/docs/api/resources/users.html
 
 # $user = New-OktaUser @{profile = @{login = $login; email = $email; firstName = $firstName; lastName = $lastName}}
@@ -38,6 +48,10 @@ function Enable-OktaUser($id, $sendEmail = $true) {
 
 function Disable-OktaUser($id) {
     Invoke-Method POST "/users/$id/lifecycle/deactivate"
+}
+
+function Set-OktaUserResetPassword($id, $sendEmail = $true) {
+    Invoke-Method POST "/users/$id/lifecycle/reset_password?sendEmail=$sendEmail"
 }
 
 # Group functions - http://developer.okta.com/docs/api/resources/groups.html
@@ -99,6 +113,6 @@ function Invoke-PagedMethod($url) {
 function Get-Error($_) {
     $responseStream = $_.Exception.Response.GetResponseStream()
     $responseReader = New-Object System.IO.StreamReader($responseStream)
-    $response = $responseReader.ReadToEnd()
-    ConvertFrom-Json $response
+    $responseContent = $responseReader.ReadToEnd()
+    ConvertFrom-Json $responseContent
 }
