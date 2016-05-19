@@ -8,6 +8,16 @@ function Connect-Okta($token, $baseUrl) {
     $script:baseUrl = "$baseUrl/api/v1"
 }
 
+# Factor (MFA) functions - http://developer.okta.com/docs/api/resources/factors.html
+
+function Get-OktaFactor($userid, $factorid) {
+    Invoke-Method GET "/users/$userid/factors/$factorid"
+}
+
+function Get-OktaFactors($id) {
+    Invoke-Method GET "/users/$id/factors"
+}
+
 # App functions - http://developer.okta.com/docs/api/resources/apps.html
 
 function Get-OktaAppUser($appid, $userid) {
@@ -107,7 +117,7 @@ function Invoke-PagedMethod($url) {
             }
         }
     }
-    @{objects = ConvertFrom-Json $response.content; nextUrl = $links.next}
+    @{objects = ConvertFrom-Json $response.content; nextUrl = $links.next; response = $response}
 }
 
 function Get-Error($_) {
