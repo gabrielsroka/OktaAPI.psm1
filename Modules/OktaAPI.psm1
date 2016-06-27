@@ -14,14 +14,22 @@ function Get-OktaFactor($userid, $factorid) {
     Invoke-Method GET "/users/$userid/factors/$factorid"
 }
 
-function Get-OktaFactors($id) {
-    Invoke-Method GET "/users/$id/factors"
+function Get-OktaFactors($userid) {
+    Invoke-Method GET "/users/$userid/factors"
+}
+
+function Set-OktaFactor($userid, $factor) {
+    Invoke-Method POST "/users/$userid/factors" $factor
 }
 
 # App functions - http://developer.okta.com/docs/api/resources/apps.html
 
 function Get-OktaAppUser($appid, $userid) {
     Invoke-Method GET "/apps/$appid/users/$userid"
+}
+
+function Get-OktaAppUsers($appid, $limit = 20, $url = "/apps/$appid/users?limit=$limit") {
+    Invoke-PagedMethod $url
 }
 
 function Set-OktaAppUser($appid, $userid, $appuser) {
@@ -80,8 +88,12 @@ function Get-OktaGroups($q, $filter, $limit = 200) {
     Invoke-Method GET "/groups?q=$q&filter=$filter&limit=$limit"
 }
 
-function Get-OktaGroupMember($id, $limit = 200) {
-    Invoke-Method GET "/groups/$id/users?limit=$limit"
+function Get-OktaGroupMember($id, $limit = 200, $url = "/groups/$id/users?limit=$limit", $paged = $false) {
+    if ($paged) {
+        Invoke-PagedMethod $url
+    } else {
+        Invoke-Method GET $url
+    }
 }
 
 function Add-OktaGroupMember($groupid, $userid) {
