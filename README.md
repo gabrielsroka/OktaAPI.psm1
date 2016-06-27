@@ -1,8 +1,10 @@
 # OktaAPI.psm1
 Unofficial code. Call Okta API from PowerShell.
 
-To Install on PowerShell 5 (see PSVersion under `$PSVersionTable`)
-see https://www.powershellgallery.com/packages/OktaAPI and https://www.powershellgallery.com/packages/CallOktaAPI
+To Install on PowerShell 5 (see PSVersion under `$PSVersionTable`) see:
+
+1. https://www.powershellgallery.com/packages/OktaAPI
+2. https://www.powershellgallery.com/packages/CallOktaAPI
 
 To Install on PowerShell 4 or older:
 
