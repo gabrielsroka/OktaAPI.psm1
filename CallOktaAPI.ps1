@@ -8,6 +8,53 @@ Import-Module OktaAPI
 
 # This file contains functions with sample code. To use one, call it.
 
+function Get-PagedAppUsers {
+    $totalAppUsers = 0
+    $params = @{appid = "0oa6k5e19jwu8aEAS0h7"; limit = 2}
+    do {
+        $page = Get-OktaAppUsers @params
+        $appusers = $page.objects
+        foreach ($appuser in $appusers) {
+            Write-Host $appuser.credentials.userName
+        }
+        $totalAppUsers += $appusers.count
+        $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+    "$totalAppUsers app users found."
+}
+
+function Enroll-Factor {
+    $userid = ""
+    $factor = @{factorType = "token"; provider = "RSA"; profile = @{credentialId = ""}; verify = @{passCode = ""}}
+    Set-OktaFactor $userid $factor
+}
+
+# Read groups from CSV and create them in Okta.
+function Create-Groups {
+    $groups = Import-Csv groups.csv
+    $importedgroups = @()
+    foreach ($group in $groups) {
+        $profile = @{name = $group.name; description = $group.description}
+        try {
+            $oktagroup = New-OktaGroup @{profile = $profile}
+            $message = "New group"
+        } catch {
+            Get-Error $_
+            try {
+                $oktagroup = Get-OktaGroups $group.name 'type eq "OKTA_GROUP"'
+                $message = "Found group"
+            } catch {
+                Get-Error $_
+                $oktagroup = $null
+                $message = "Invalid group"
+            }
+        }
+        $importedgroups += [PSCustomObject]@{id = $oktagroup.id; name = $group.name; message = $message}
+    }
+    $importedgroups | Export-Csv importedgroups.csv -notype
+    "$($groups.count) groups read." 
+}
+
 # Read users from CSV, create them in Okta, and add to a group.
 function Import-Users {
 <# Sample users.csv file with 5 fields. Make sure you include the header line as the first record.
@@ -62,12 +109,14 @@ function Add-GroupMember {
 }
 
 function Rename-Users {
-    $page = Get-OktaUsers "test"
+    $page = Get-OktaUsers -filter 'status eq "DEPROVISIONED"'
     $users = $page.objects
     # $oktaCredUsers = $users | where {$_.credentials.provider.type -eq "OKTA"}
     foreach ($user in $users) {
         if ($user.credentials.provider.type -eq "OKTA") {
-            Set-OktaUser $user.id @{profile = @{lastName = "z"}}
+            $url = Enable-OktaUser $user.id $false
+            $updatedUser = Set-OktaUser $user.id @{profile = @{email = "test@gsroka.local"}}
+            Disable-OktaUser $user.id
         }
     }
     "$($users.count) users found."
@@ -84,6 +133,21 @@ function Get-PagedUsers {
         }
         $totalUsers += $users.count
         $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+    "$totalUsers users found."
+}
+
+function Get-PagedMembers {
+    $totalUsers = 0
+    $params = @{id = "00g6fnikz1KOvNPK70h7"; limit = 1; paged = $true}
+    do {
+        $page = Get-OktaGroupMember @params
+        $users = $page.objects
+        foreach ($user in $users) {
+            Write-Host $user.profile.login
+        }
+        $totalUsers += $users.count
+        $params = @{url = $page.nextUrl; paged = $true}
     } while ($page.nextUrl)
     "$totalUsers users found."
 }
