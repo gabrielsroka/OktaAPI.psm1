@@ -72,6 +72,10 @@ function Set-OktaUserResetPassword($id, $sendEmail = $true) {
     Invoke-Method POST "/users/$id/lifecycle/reset_password?sendEmail=$sendEmail"
 }
 
+function Set-OktaUserExpirePassword($id) {
+    Invoke-Method POST "/users/$id/lifecycle/expire_password"
+}
+
 # Group functions - http://developer.okta.com/docs/api/resources/groups.html
 
 # $group = New-OktaGroup @{profile = @{name = "a group"; description = "its description"}}
