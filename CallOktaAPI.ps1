@@ -9,11 +9,18 @@ Import-Module OktaAPI
 # This file contains functions with sample code. To use one, call it.
 
 function Export-Groups {
-    $groups = Get-OktaGroups -filter 'type eq "OKTA_GROUP"'
+    $totalGroups = 0
     $exportedgroups = @()
-    foreach ($group in $groups) {
-        $exportedgroups += [PSCustomObject]@{id = $group.id; name = $group.profile.name}
-    }
+    $params = @{filter = 'type eq "OKTA_GROUP"'; paged = $true}
+    do {
+        $page = Get-OktaGroups @params
+        $grouops = $page.objects
+        foreach ($group in $groups) {
+            $exportedgroups += [PSCustomObject]@{id =$group.id; name = $group.profile.name}
+        }
+        $totalGroups += $groups.count
+        $params = @{url = $page.nextUrl; paged = $true}
+    } while ($page.nextUrl)
     $exportedgroups | Export-Csv exportedgroups.csv -notype
     "$($groups.count) groups exported." 
 }
