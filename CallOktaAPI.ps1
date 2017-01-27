@@ -22,7 +22,7 @@ function Export-Users {
     $totalUsers = 0
     $exportedusers = @()
 # for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
-    $params = @{}
+    $params = @{filter = 'status eq "ACTIVE"'}
     do {
         $page = Get-OktaUsers @params
         $users = $page.objects
