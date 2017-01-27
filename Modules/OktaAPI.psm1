@@ -88,8 +88,12 @@ function Get-OktaGroup($id) {
 }
 
 # $groups = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
-function Get-OktaGroups($q, $filter, $limit = 200) {
-    Invoke-Method GET "/groups?q=$q&filter=$filter&limit=$limit"
+function Get-OktaGroups($q, $filter, $limit = 200, $url = "/groups?q=$q&filter=$filter&limit=$limit", $paged = $false) {
+    if ($paged) {
+        Invoke-PagedMethod $url
+    } else {
+        Invoke-Method GET $url
+    }
 }
 
 function Get-OktaGroupMember($id, $limit = 200, $url = "/groups/$id/users?limit=$limit", $paged = $false) {
