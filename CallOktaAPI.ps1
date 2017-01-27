@@ -14,7 +14,7 @@ function Export-Groups {
     $params = @{filter = 'type eq "OKTA_GROUP"'; paged = $true}
     do {
         $page = Get-OktaGroups @params
-        $grouops = $page.objects
+        $groups = $page.objects
         foreach ($group in $groups) {
             $exportedgroups += [PSCustomObject]@{id =$group.id; name = $group.profile.name}
         }
