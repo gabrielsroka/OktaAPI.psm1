@@ -8,6 +8,34 @@ Import-Module OktaAPI
 
 # This file contains functions with sample code. To use one, call it.
 
+function Export-Groups {
+    $groups = Get-OktaGroups -filter 'type eq "OKTA_GROUP"'
+    $exportedgroups = @()
+    foreach ($group in $groups) {
+        $exportedgroups += [PSCustomObject]@{id = $group.id; name = $group.profile.name}
+    }
+    $exportedgroups | Export-Csv exportedgroups.csv -notype
+    "$($groups.count) groups exported." 
+}
+
+function Export-Users {
+    $totalUsers = 0
+    $exportedusers = @()
+# for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
+    $params = @{}
+    do {
+        $page = Get-OktaUsers @params
+        $users = $page.objects
+        foreach ($user in $users) {
+            $exportedusers += [PSCustomObject]@{id = $user.id; name = $user.profile.login}
+        }
+        $exportedusers | Export-Csv exportedusers.csv -notype
+        $totalUsers += $users.count
+        $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+    "$totalUsers users found."
+}
+
 function Get-PagedAppUsers {
     $totalAppUsers = 0
     $params = @{appid = "0oa6k5e19jwu8aEAS0h7"; limit = 2}
