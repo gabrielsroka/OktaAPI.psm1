@@ -43,6 +43,31 @@ function Export-Users {
     "$totalUsers users found."
 }
 
+function Export-UsersAndGroups {
+    $totalUsers = 0
+    $exportedusers = @()
+# for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
+    $params = @{filter = 'status eq "ACTIVE"'}
+    do {
+        $page = Get-OktaUsers @params
+        $users = $page.objects
+        foreach ($user in $users) {
+            $userGroups = Get-OktaUserGroups $user.id
+            $groups = @()
+            foreach ($userGroup in $userGroups) {
+                if ($userGroup.type -eq "OKTA_GROUP") {
+                    $groups += $userGroup.profile.name
+                }
+            }
+            $exportedusers += [PSCustomObject]@{id = $user.id; name = $user.profile.login; groups = $groups -join ";"}
+        }
+        $totalUsers += $users.count
+        $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+    $exportedusers | Export-Csv exportedusersgroups.csv -notype
+    "$totalUsers users exported."
+}
+
 function Get-PagedAppUsers {
     $totalAppUsers = 0
     $params = @{appid = "0oa6k5e19jwu8aEAS0h7"; limit = 2}
