@@ -36,10 +36,10 @@ function Export-Users {
         foreach ($user in $users) {
             $exportedusers += [PSCustomObject]@{id = $user.id; name = $user.profile.login}
         }
-        $exportedusers | Export-Csv exportedusers.csv -notype
         $totalUsers += $users.count
         $params = @{url = $page.nextUrl}
     } while ($page.nextUrl)
+    $exportedusers | Export-Csv exportedusers.csv -notype
     "$totalUsers users found."
 }
 
