@@ -76,6 +76,10 @@ function Set-OktaUserExpirePassword($id) {
     Invoke-Method POST "/users/$id/lifecycle/expire_password"
 }
 
+function Remove-OktaUser($id) {
+    Invoke-Method DELETE "/users/$id"
+}
+
 # Group functions - http://developer.okta.com/docs/api/resources/groups.html
 
 # $group = New-OktaGroup @{profile = @{name = "a group"; description = "its description"}}
