@@ -8,20 +8,6 @@ function Connect-Okta($token, $baseUrl) {
     $script:baseUrl = "$baseUrl/api/v1"
 }
 
-# Factor (MFA) functions - http://developer.okta.com/docs/api/resources/factors.html
-
-function Get-OktaFactor($userid, $factorid) {
-    Invoke-Method GET "/users/$userid/factors/$factorid"
-}
-
-function Get-OktaFactors($userid) {
-    Invoke-Method GET "/users/$userid/factors"
-}
-
-function Set-OktaFactor($userid, $factor) {
-    Invoke-Method POST "/users/$userid/factors" $factor
-}
-
 # App functions - http://developer.okta.com/docs/api/resources/apps.html
 
 function Get-OktaAppUser($appid, $userid) {
@@ -36,48 +22,28 @@ function Set-OktaAppUser($appid, $userid, $appuser) {
     Invoke-Method POST "/apps/$appid/users/$userid" $appuser
 }
 
-# User functions - http://developer.okta.com/docs/api/resources/users.html
+# Event functions - http://developer.okta.com/docs/api/resources/events.html
 
-# $user = New-OktaUser @{profile = @{login = $login; email = $email; firstName = $firstName; lastName = $lastName}}
-function New-OktaUser($user, $activate = $true) {
-    Invoke-Method POST "/users?activate=$activate" $user
+function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/events?startDate=$startDate&filter=$filter&limit=$limit", $paged = $false) {
+    if ($paged) {
+        Invoke-PagedMethod $url
+    } else {
+        Invoke-Method GET $url
+    }
 }
 
-function Get-OktaUser($id) {
-    Invoke-Method GET "/users/$id"
+# Factor (MFA) functions - http://developer.okta.com/docs/api/resources/factors.html
+
+function Get-OktaFactor($userid, $factorid) {
+    Invoke-Method GET "/users/$userid/factors/$factorid"
 }
 
-function Get-OktaUsers($q, $filter, $limit = 200, $url = "/users?q=$q&filter=$filter&limit=$limit") {
-    Invoke-PagedMethod $url
+function Get-OktaFactors($userid) {
+    Invoke-Method GET "/users/$userid/factors"
 }
 
-function Set-OktaUser($id, $user) {
-# Only the profile properties specified in the request will be modified when using the POST method.
-    Invoke-Method POST "/users/$id" $user
-}
-
-function Get-OktaUserGroups($id) {
-    Invoke-Method GET "/users/$id/groups"
-}
-
-function Enable-OktaUser($id, $sendEmail = $true) {
-    Invoke-Method POST "/users/$id/lifecycle/activate?sendEmail=$sendEmail"
-}
-
-function Disable-OktaUser($id) {
-    Invoke-Method POST "/users/$id/lifecycle/deactivate"
-}
-
-function Set-OktaUserResetPassword($id, $sendEmail = $true) {
-    Invoke-Method POST "/users/$id/lifecycle/reset_password?sendEmail=$sendEmail"
-}
-
-function Set-OktaUserExpirePassword($id) {
-    Invoke-Method POST "/users/$id/lifecycle/expire_password"
-}
-
-function Remove-OktaUser($id) {
-    Invoke-Method DELETE "/users/$id"
+function Set-OktaFactor($userid, $factor) {
+    Invoke-Method POST "/users/$userid/factors" $factor
 }
 
 # Group functions - http://developer.okta.com/docs/api/resources/groups.html
@@ -116,10 +82,48 @@ function Remove-OktaGroupMember($groupid, $userid) {
     $noContent = Invoke-Method DELETE "/groups/$groupid/users/$userid"
 }
 
-# Event functions - http://developer.okta.com/docs/api/resources/events.html
+# User functions - http://developer.okta.com/docs/api/resources/users.html
 
-function Get-OktaEvents($startDate, $filter, $limit = 1000) {
-    Invoke-Method GET "/events?startDate=$startDate&filter=$filter&limit=$limit"
+# $user = New-OktaUser @{profile = @{login = $login; email = $email; firstName = $firstName; lastName = $lastName}}
+function New-OktaUser($user, $activate = $true) {
+    Invoke-Method POST "/users?activate=$activate" $user
+}
+
+function Get-OktaUser($id) {
+    Invoke-Method GET "/users/$id"
+}
+
+function Get-OktaUsers($q, $filter, $limit = 200, $url = "/users?q=$q&filter=$filter&limit=$limit") {
+    Invoke-PagedMethod $url
+}
+
+function Set-OktaUser($id, $user) {
+# Only the profile properties specified in the request will be modified when using the POST method.
+    Invoke-Method POST "/users/$id" $user
+}
+
+function Get-OktaUserGroups($id) {
+    Invoke-Method GET "/users/$id/groups"
+}
+
+function Enable-OktaUser($id, $sendEmail = $true) {
+    Invoke-Method POST "/users/$id/lifecycle/activate?sendEmail=$sendEmail"
+}
+
+function Disable-OktaUser($id) {
+    $noContent = Invoke-Method POST "/users/$id/lifecycle/deactivate"
+}
+
+function Set-OktaUserResetPassword($id, $sendEmail = $true) {
+    Invoke-Method POST "/users/$id/lifecycle/reset_password?sendEmail=$sendEmail"
+}
+
+function Set-OktaUserExpirePassword($id) {
+    Invoke-Method POST "/users/$id/lifecycle/expire_password"
+}
+
+function Remove-OktaUser($id) {
+    Invoke-Method DELETE "/users/$id"
 }
 
 # Core functions
