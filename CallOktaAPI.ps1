@@ -8,6 +8,22 @@ Import-Module OktaAPI
 
 # This file contains functions with sample code. To use one, call it.
 
+function Get-DeprovisionedUsers {
+    $totalUsers = 0
+    $params = @{limit = 25; filter = 'status eq "DEPROVISIONED"'} # default is 200, test with a smaller page.
+    do {
+        $page = Get-OktaUsers @params
+        $users = $page.objects
+        foreach ($user in $users) {
+            Write-Host $user.profile.login $user.credentials.provider.type
+            Remove-OktaUser $user.id
+        }
+        $totalUsers += $users.count
+        $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+    "$totalUsers users found."
+}
+
 function Export-Groups {
     $totalGroups = 0
     $exportedgroups = @()
