@@ -8,6 +8,51 @@ Import-Module OktaAPI
 
 # This file contains functions with sample code. To use one, call it.
 
+function Get-Logs() {
+    $filePath = "Log.json"
+    $fromTime = Get-Date -Format s
+    $fromTime = $fromTime.Substring(0,10) + "T00%3A00%3A00Z"
+    $toTime = Get-Date -Format s
+    $toTime = $fromTime.Substring(0,10) + "T23%3A59%3A59Z"
+
+    $flush = 50 # Flush memory every N pages
+    $minRemaining = 10
+
+    $allLogs = @()
+    $pages = 0
+
+    $params = @{since = $fromTime; until = $toTime; sortOrder = "DESCENDING"}
+    "[" | Out-File $filePath
+    do {
+        $page = Get-OktaLogs @params
+        $allLogs += $page.objects # these are converted from JSON, but then we convert back to JSON. TODO: optimize.
+        $pages++
+        if ($pages -eq $flush) {
+            Flush-File $allLogs
+            "," | Out-File $filePath -Append
+            $allLogs = @()
+            $pages = 0
+        }
+        if ($page.limitRemaining -lt $minRemaining) {
+            do {
+                Start-Sleep 1
+                $now = [DateTimeOffset]::Now.ToUnixTimeSeconds()
+            } until ($now -gt $page.limitReset)
+        }
+        $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+
+    Flush-File $allLogs
+
+    "]" | Out-File $filePath -Append
+}
+
+function Flush-File($allLogs) {
+    $s = $allLogs | ConvertTo-Json -Compress
+    $s = $s.substring(1, $s.length - 2) # remove first "[" and last "]"
+    $s | Out-File $filePath -Append
+}
+
 function Get-DeprovisionedUsers {
     $totalUsers = 0
     $params = @{limit = 25; filter = 'status eq "DEPROVISIONED"'} # default is 200, test with a smaller page.
