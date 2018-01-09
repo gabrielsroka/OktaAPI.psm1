@@ -18,6 +18,10 @@ function Get-OktaAppUsers($appid, $limit = 20, $url = "/apps/$appid/users?limit=
     Invoke-PagedMethod $url
 }
 
+function Get-OktaAppGroups($appid, $limit = 20, $url = "/apps/$appid/groups?limit=$limit") {
+    Invoke-PagedMethod $url
+}
+
 function Set-OktaAppUser($appid, $userid, $appuser) {
     Invoke-Method POST "/apps/$appid/users/$userid" $appuser
 }
@@ -130,6 +134,16 @@ function Set-OktaUserExpirePassword($id) {
 
 function Remove-OktaUser($id) {
     Invoke-Method DELETE "/users/$id"
+}
+
+# Zone functions - http://developer.okta.com/docs/api/resources/zones.html
+
+function Get-OktaZone($id) {
+    Invoke-Method GET "/zones/$id"
+}
+
+function Get-OktaZones() {
+    Invoke-PagedMethod "/zones"
 }
 
 # Core functions
