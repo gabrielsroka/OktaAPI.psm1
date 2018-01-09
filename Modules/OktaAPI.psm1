@@ -82,6 +82,12 @@ function Remove-OktaGroupMember($groupid, $userid) {
     $noContent = Invoke-Method DELETE "/groups/$groupid/users/$userid"
 }
 
+# Logs functions - https://developer.okta.com/docs/api/resources/system_log
+
+function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit") {
+    Invoke-PagedMethod $url
+}
+
 # User functions - http://developer.okta.com/docs/api/resources/users.html
 
 # $user = New-OktaUser @{profile = @{login = $login; email = $email; firstName = $firstName; lastName = $lastName}}
@@ -145,7 +151,13 @@ function Invoke-PagedMethod($url) {
             }
         }
     }
-    @{objects = ConvertFrom-Json $response.content; nextUrl = $links.next; response = $response}
+    @{objects = ConvertFrom-Json $response.content
+      nextUrl = $links.next
+      response = $response
+      limitLimit = [int64]$response.Headers.'X-Rate-Limit-Limit';
+      limitRemaining = [int64]$response.Headers.'X-Rate-Limit-Remaining'; # how many calls are remaining
+      limitReset = [int64]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset
+    }
 }
 
 function Get-Error($_) {
