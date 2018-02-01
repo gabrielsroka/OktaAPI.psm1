@@ -71,42 +71,42 @@ function Get-DeprovisionedUsers {
 
 function Export-Groups {
     $totalGroups = 0
-    $exportedgroups = @()
+    $exportedGroups = @()
     $params = @{filter = 'type eq "OKTA_GROUP"'; paged = $true}
     do {
         $page = Get-OktaGroups @params
         $groups = $page.objects
         foreach ($group in $groups) {
-            $exportedgroups += [PSCustomObject]@{id =$group.id; name = $group.profile.name}
+            $exportedGroups += [PSCustomObject]@{id =$group.id; name = $group.profile.name}
         }
         $totalGroups += $groups.count
         $params = @{url = $page.nextUrl; paged = $true}
     } while ($page.nextUrl)
-    $exportedgroups | Export-Csv exportedgroups.csv -notype
+    $exportedGroups | Export-Csv ExportedGroups.csv -notype
     "$($groups.count) groups exported." 
 }
 
 function Export-Users {
     $totalUsers = 0
-    $exportedusers = @()
+    $exportedUsers = @()
 # for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
     $params = @{filter = 'status eq "ACTIVE"'}
     do {
         $page = Get-OktaUsers @params
         $users = $page.objects
         foreach ($user in $users) {
-            $exportedusers += [PSCustomObject]@{id = $user.id; name = $user.profile.login}
+            $exportedUsers += [PSCustomObject]@{id = $user.id; name = $user.profile.login}
         }
         $totalUsers += $users.count
         $params = @{url = $page.nextUrl}
     } while ($page.nextUrl)
-    $exportedusers | Export-Csv exportedusers.csv -notype
+    $exportedUsers | Export-Csv ExportedUsers.csv -notype
     "$totalUsers users found."
 }
 
 function Export-UsersAndGroups {
     $totalUsers = 0
-    $exportedusers = @()
+    $exportedUsers = @()
 # for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
     $params = @{filter = 'status eq "ACTIVE"'}
     do {
@@ -120,12 +120,12 @@ function Export-UsersAndGroups {
                     $groups += $userGroup.profile.name
                 }
             }
-            $exportedusers += [PSCustomObject]@{id = $user.id; name = $user.profile.login; groups = $groups -join ";"}
+            $exportedUsers += [PSCustomObject]@{id = $user.id; name = $user.profile.login; groups = $groups -join ";"}
         }
         $totalUsers += $users.count
         $params = @{url = $page.nextUrl}
     } while ($page.nextUrl)
-    $exportedusers | Export-Csv exportedusersgroups.csv -notype
+    $exportedUsers | Export-Csv ExportedUsersGroups.csv -notype
     "$totalUsers users exported."
 }
 
@@ -153,26 +153,26 @@ function Enroll-Factor {
 # Read groups from CSV and create them in Okta.
 function Create-Groups {
     $groups = Import-Csv groups.csv
-    $importedgroups = @()
+    $importedGroups = @()
     foreach ($group in $groups) {
         $profile = @{name = $group.name; description = $group.description}
         try {
-            $oktagroup = New-OktaGroup @{profile = $profile}
+            $oktaGroup = New-OktaGroup @{profile = $profile}
             $message = "New group"
         } catch {
             Get-Error $_
             try {
-                $oktagroup = Get-OktaGroups $group.name 'type eq "OKTA_GROUP"'
+                $oktaGroup = Get-OktaGroups $group.name 'type eq "OKTA_GROUP"'
                 $message = "Found group"
             } catch {
                 Get-Error $_
-                $oktagroup = $null
+                $oktaGroup = $null
                 $message = "Invalid group"
             }
         }
-        $importedgroups += [PSCustomObject]@{id = $oktagroup.id; name = $group.name; message = $message}
+        $importedGroups += [PSCustomObject]@{id = $oktagroup.id; name = $group.name; message = $message}
     }
-    $importedgroups | Export-Csv importedgroups.csv -notype
+    $importedGroups | Export-Csv ImportedGroups.csv -notype
     "$($groups.count) groups read." 
 }
 
@@ -207,7 +207,7 @@ testa2@okta.com,testa2@okta.com,Test,A2,00g5gtwaaeOe7smEF0h7
         }
         $importedUsers += [PSCustomObject]@{id = $oktaUser.id; login = $user.login; message = $message}
     }
-    $importedUsers | Export-Csv importedUsers.csv -NoTypeInformation
+    $importedUsers | Export-Csv ImportedUsers.csv -NoTypeInformation
     "$($users.count) users read."
 }
 
@@ -287,9 +287,9 @@ function Get-Headers {
         if ($remaining -gt 20) {
             try {
                 $page = Get-OktaUsers -filter 'profile.login eq "gabriel.sroka@lokta.com"'
-                $limit = [int64]$page.response.Headers.'X-Rate-Limit-Limit'
-                $remaining = [int64]$page.response.Headers.'X-Rate-Limit-Remaining'
-                $reset = [int64]$page.response.Headers.'X-Rate-Limit-Reset'
+                $limit = $page.limitLimit
+                $remaining = $page.limitRemaining
+                $reset = $page.limitReset
                 Write-Host "now: " + $now + " remaining: " + $remaining + " reset: " + $reset
             } catch {
                 Write-Host "Error ! (need to redo last call)."
