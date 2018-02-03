@@ -5,38 +5,38 @@ $userAgent = "OktaAPIWindowsPowerShell/0.1"
 # Call this before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
     $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
-    $script:baseUrl = "$baseUrl/api/v1"
+    $script:baseUrl = "$baseUrl"
 }
 
-# App functions - http://developer.okta.com/docs/api/resources/apps.html
+# Apps - https://developer.okta.com/docs/api/resources/apps
 
 function New-OktaApp($app, $activate = $true) {
-    Invoke-Method POST "/apps?activate=$activate" $app
+    Invoke-Method POST "/api/v1/apps?activate=$activate" $app
 }
 
 function Add-OktaAppUser($appid, $appuser) {
-    Invoke-Method POST "/apps/$appid/users" $appuser
+    Invoke-Method POST "/api/v1/apps/$appid/users" $appuser
 }
 
 function Get-OktaAppUser($appid, $userid) {
-    Invoke-Method GET "/apps/$appid/users/$userid"
+    Invoke-Method GET "/api/v1/apps/$appid/users/$userid"
 }
 
-function Get-OktaAppUsers($appid, $limit = 20, $url = "/apps/$appid/users?limit=$limit") {
+function Get-OktaAppUsers($appid, $limit = 20, $url = "/api/v1/apps/$appid/users?limit=$limit") {
     Invoke-PagedMethod $url
 }
 
-function Get-OktaAppGroups($appid, $limit = 20, $url = "/apps/$appid/groups?limit=$limit") {
+function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/groups?limit=$limit") {
     Invoke-PagedMethod $url
 }
 
 function Set-OktaAppUser($appid, $userid, $appuser) {
-    Invoke-Method POST "/apps/$appid/users/$userid" $appuser
+    Invoke-Method POST "/api/v1/apps/$appid/users/$userid" $appuser
 }
 
-# Event functions - http://developer.okta.com/docs/api/resources/events.html
+# Events - https://developer.okta.com/docs/api/resources/events
 
-function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/events?startDate=$startDate&filter=$filter&limit=$limit", $paged = $false) {
+function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/api/v1/events?startDate=$startDate&filter=$filter&limit=$limit", $paged = $false) {
     if ($paged) {
         Invoke-PagedMethod $url
     } else {
@@ -44,33 +44,33 @@ function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/events?star
     }
 }
 
-# Factor (MFA) functions - http://developer.okta.com/docs/api/resources/factors.html
+# Factors (MFA) - https://developer.okta.com/docs/api/resources/factors
 
 function Get-OktaFactor($userid, $factorid) {
-    Invoke-Method GET "/users/$userid/factors/$factorid"
+    Invoke-Method GET "/api/v1/users/$userid/factors/$factorid"
 }
 
 function Get-OktaFactors($userid) {
-    Invoke-Method GET "/users/$userid/factors"
+    Invoke-Method GET "/api/v1/users/$userid/factors"
 }
 
 function Set-OktaFactor($userid, $factor) {
-    Invoke-Method POST "/users/$userid/factors" $factor
+    Invoke-Method POST "/api/v1/users/$userid/factors" $factor
 }
 
-# Group functions - http://developer.okta.com/docs/api/resources/groups.html
+# Groups - https://developer.okta.com/docs/api/resources/groups
 
 # $group = New-OktaGroup @{profile = @{name = "a group"; description = "its description"}}
 function New-OktaGroup($group) {
-    Invoke-Method POST "/groups" $group
+    Invoke-Method POST "/api/v1/groups" $group
 }
 
 function Get-OktaGroup($id) {
-    Invoke-Method GET "/groups/$id"
+    Invoke-Method GET "/api/v1/groups/$id"
 }
 
 # $groups = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
-function Get-OktaGroups($q, $filter, $limit = 200, $url = "/groups?q=$q&filter=$filter&limit=$limit", $paged = $false) {
+function Get-OktaGroups($q, $filter, $limit = 200, $url = "/api/v1/groups?q=$q&filter=$filter&limit=$limit", $paged = $false) {
     if ($paged) {
         Invoke-PagedMethod $url
     } else {
@@ -78,7 +78,7 @@ function Get-OktaGroups($q, $filter, $limit = 200, $url = "/groups?q=$q&filter=$
     }
 }
 
-function Get-OktaGroupMember($id, $limit = 200, $url = "/groups/$id/users?limit=$limit", $paged = $false) {
+function Get-OktaGroupMember($id, $limit = 200, $url = "/api/v1/groups/$id/users?limit=$limit", $paged = $false) {
     if ($paged) {
         Invoke-PagedMethod $url
     } else {
@@ -87,71 +87,71 @@ function Get-OktaGroupMember($id, $limit = 200, $url = "/groups/$id/users?limit=
 }
 
 function Add-OktaGroupMember($groupid, $userid) {
-    $noContent = Invoke-Method PUT "/groups/$groupid/users/$userid"
+    $noContent = Invoke-Method PUT "/api/v1/groups/$groupid/users/$userid"
 }
 
 function Remove-OktaGroupMember($groupid, $userid) {
-    $noContent = Invoke-Method DELETE "/groups/$groupid/users/$userid"
+    $noContent = Invoke-Method DELETE "/api/v1/groups/$groupid/users/$userid"
 }
 
-# Logs functions - https://developer.okta.com/docs/api/resources/system_log
+# Logs - https://developer.okta.com/docs/api/resources/system_log
 
-function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit") {
+function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/api/v1/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit") {
     Invoke-PagedMethod $url
 }
 
-# User functions - http://developer.okta.com/docs/api/resources/users.html
+# Users - https://developer.okta.com/docs/api/resources/users
 
 # $user = New-OktaUser @{profile = @{login = $login; email = $email; firstName = $firstName; lastName = $lastName}}
 function New-OktaUser($user, $activate = $true) {
-    Invoke-Method POST "/users?activate=$activate" $user
+    Invoke-Method POST "/api/v1/users?activate=$activate" $user
 }
 
 function Get-OktaUser($id) {
-    Invoke-Method GET "/users/$id"
+    Invoke-Method GET "/api/v1/users/$id"
 }
 
-function Get-OktaUsers($q, $filter, $limit = 200, $url = "/users?q=$q&filter=$filter&limit=$limit") {
+function Get-OktaUsers($q, $filter, $limit = 200, $url = "/api/v1/users?q=$q&filter=$filter&limit=$limit") {
     Invoke-PagedMethod $url
 }
 
 function Set-OktaUser($id, $user) {
 # Only the profile properties specified in the request will be modified when using the POST method.
-    Invoke-Method POST "/users/$id" $user
+    Invoke-Method POST "/api/v1/users/$id" $user
 }
 
 function Get-OktaUserGroups($id) {
-    Invoke-Method GET "/users/$id/groups"
+    Invoke-Method GET "/api/v1/users/$id/groups"
 }
 
 function Enable-OktaUser($id, $sendEmail = $true) {
-    Invoke-Method POST "/users/$id/lifecycle/activate?sendEmail=$sendEmail"
+    Invoke-Method POST "/api/v1/users/$id/lifecycle/activate?sendEmail=$sendEmail"
 }
 
 function Disable-OktaUser($id) {
-    $noContent = Invoke-Method POST "/users/$id/lifecycle/deactivate"
+    $noContent = Invoke-Method POST "/api/v1/users/$id/lifecycle/deactivate"
 }
 
 function Set-OktaUserResetPassword($id, $sendEmail = $true) {
-    Invoke-Method POST "/users/$id/lifecycle/reset_password?sendEmail=$sendEmail"
+    Invoke-Method POST "/api/v1/users/$id/lifecycle/reset_password?sendEmail=$sendEmail"
 }
 
 function Set-OktaUserExpirePassword($id) {
-    Invoke-Method POST "/users/$id/lifecycle/expire_password"
+    Invoke-Method POST "/api/v1/users/$id/lifecycle/expire_password"
 }
 
 function Remove-OktaUser($id) {
-    Invoke-Method DELETE "/users/$id"
+    Invoke-Method DELETE "/api/v1/users/$id"
 }
 
-# Zone functions - http://developer.okta.com/docs/api/resources/zones.html
+# Zones - https://developer.okta.com/docs/api/resources/zones
 
 function Get-OktaZone($id) {
-    Invoke-Method GET "/zones/$id"
+    Invoke-Method GET "/api/v1/zones/$id"
 }
 
 function Get-OktaZones() {
-    Invoke-PagedMethod "/zones"
+    Invoke-PagedMethod "/api/v1/zones"
 }
 
 # Core functions
@@ -176,8 +176,8 @@ function Invoke-PagedMethod($url) {
     @{objects = ConvertFrom-Json $response.content
       nextUrl = $links.next
       response = $response
-      limitLimit = [int64]$response.Headers.'X-Rate-Limit-Limit';
-      limitRemaining = [int64]$response.Headers.'X-Rate-Limit-Remaining'; # how many calls are remaining
+      limitLimit = [int64]$response.Headers.'X-Rate-Limit-Limit'
+      limitRemaining = [int64]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
       limitReset = [int64]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset
     }
 }
