@@ -14,6 +14,14 @@ function New-OktaApp($app, $activate = $true) {
     Invoke-Method POST "/api/v1/apps?activate=$activate" $app
 }
 
+function Get-OktaApp($appid) {
+    Invoke-Method GET "/api/v1/apps/$appid"
+}
+
+function Get-OktaApps($filter, $limit = 20, $expand, $url = "/api/v1/apps?filter=$filter&limit=$limit&expand=$expand") {
+    Invoke-PagedMethod $url
+}
+
 function Add-OktaAppUser($appid, $appuser) {
     Invoke-Method POST "/api/v1/apps/$appid/users" $appuser
 }
