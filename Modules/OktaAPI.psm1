@@ -10,6 +10,14 @@ function Connect-Okta($token, $baseUrl) {
 
 # App functions - http://developer.okta.com/docs/api/resources/apps.html
 
+function New-OktaApp($app, $activate = $true) {
+    Invoke-Method POST "/apps?activate=$activate" $app
+}
+
+function Add-OktaAppUser($appid, $appuser) {
+    Invoke-Method POST "/apps/$appid/users" $appuser
+}
+
 function Get-OktaAppUser($appid, $userid) {
     Invoke-Method GET "/apps/$appid/users/$userid"
 }
