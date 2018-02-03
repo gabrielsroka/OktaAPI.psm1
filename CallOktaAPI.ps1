@@ -8,6 +8,19 @@ Import-Module OktaAPI
 
 # This file contains functions with sample code. To use one, call it.
 
+function Add-SwaApp() {
+    $me = Get-OktaUser "me"
+    
+    # see https://developer.okta.com/docs/api/resources/apps#add-custom-swa-application
+    $app = @{label = "AAA Test App"; settings = @{signOn = @{loginUrl = "https://aaatest.oktapreview.com"}};
+        signOnMode = "AUTO_LOGIN"; visibility = @{autoSubmitToolbar = $false}}
+    $app = New-OktaApp $app
+
+    # see https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
+    $appuser = @{id = $me.id; scope = "USER"}
+    Add-OktaAppUser $app.id $appuser
+}
+
 function Get-Logs() {
     $filePath = "Log.json"
     $fromTime = Get-Date -Format s
