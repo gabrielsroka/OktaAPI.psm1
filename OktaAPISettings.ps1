@@ -1,5 +1,5 @@
-# API token comes from Okta Admin > Security > API > Create Token
-# see http://developer.okta.com/docs/api/getting_started/getting_a_token.html
+# API token comes from Okta Admin > Security > API > Tokens > Create Token
+# see https://developer.okta.com/docs/api/getting_started/getting_a_token
 
 # Tokens are valid for 30 days and automatically refresh with each API call. 
 # Tokens that are not used for 30 days will expire.
