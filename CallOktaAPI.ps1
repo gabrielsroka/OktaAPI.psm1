@@ -2,7 +2,7 @@
 Import-Module OktaAPI
 
 # $token comes from Okta Admin > Security > API > Tokens > Create Token
-# see http://developer.okta.com/docs/api/getting_started/getting_a_token.html
+# see https://developer.okta.com/docs/api/getting_started/getting_a_token
 
 # Call Connect-Okta before calling Okta API functions. Replace YOUR_API_TOKEN and YOUR_ORG with your values.
 # Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
