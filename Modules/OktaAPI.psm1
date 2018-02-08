@@ -42,6 +42,10 @@ function Set-OktaAppUser($appid, $userid, $appuser) {
     Invoke-Method POST "/api/v1/apps/$appid/users/$userid" $appuser
 }
 
+function Remove-OktaAppUser($appid, $userid) {
+    $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/users/$userid"
+}
+
 # Events - https://developer.okta.com/docs/api/resources/events
 
 function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/api/v1/events?startDate=$startDate&filter=$filter&limit=$limit", $paged = $false) {
