@@ -75,6 +75,14 @@ function Get-AppGroups {
     "$total app groups found."
 }
 
+function Remove-AppUser() {
+    $appid = "0oa9hyyos3VeoXaEG0h7"
+    $userid = "00u4ib1peqdcXfT1W0h7"
+
+    $updatedUser = Set-OktaAppUser $appid $userid @{scope = "USER"}
+    Remove-OktaAppUser $appid $userid
+}
+
 # Events
 
 function Get-Events {
