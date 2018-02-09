@@ -77,10 +77,10 @@ function Get-AppGroups {
 
 function Remove-AppUser() {
     $appid = "0oa9hyyos3VeoXaEG0h7"
-    $userid = "00u4ib1peqdcXfT1W0h7"
 
-    $updatedUser = Set-OktaAppUser $appid $userid @{scope = "USER"}
-    Remove-OktaAppUser $appid $userid
+    $user = Get-OktaUser "jblues@learnokta.local"
+    $appUser = Set-OktaAppUser $appid $user.id @{scope = "USER"}
+    Remove-OktaAppUser $appid $user.id
 }
 
 # Events
@@ -151,7 +151,9 @@ function Add-GroupMember {
 function Export-Groups {
     $totalGroups = 0
     $exportedGroups = @()
-    $filter = 'type eq "APP_GROUP"' # type eq "OKTA_GROUP", "APP_GROUP" (including AD/LDAP), or "BUILT_IN" http://developer.okta.com/docs/api/resources/groups.html#group-type
+    # type eq "OKTA_GROUP", "APP_GROUP" (including AD/LDAP), or "BUILT_IN" 
+    # see https://developer.okta.com/docs/api/resources/groups#group-type
+    $filter = 'type eq "APP_GROUP"' 
     $params = @{filter = $filter; paged = $true}
     do {
         $page = Get-OktaGroups @params
@@ -208,7 +210,7 @@ function Get-Logs() {
 }
 
 function Flush-File($allLogs, $filePath) {
-    $s = $allLogs | ConvertTo-Json -Compress
+    $s = $allLogs | ConvertTo-Json -Compress -Depth 100 # max depth is 100
     $s = $s.substring(1, $s.length - 2) # remove first "[" and last "]"
     $s | Out-File $filePath -Append
 }
@@ -288,7 +290,7 @@ function Get-PagedUsers {
 function Export-Users {
     $totalUsers = 0
     $exportedUsers = @()
-# for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
+    # for more filters, see https://developer.okta.com/docs/api/resources/users#list-users-with-a-filter
     $params = @{} # @{filter = 'status eq "ACTIVE"'}
     do {
         $page = Get-OktaUsers @params
@@ -308,7 +310,7 @@ function Export-Users {
 function Export-UsersAndGroups {
     $totalUsers = 0
     $exportedUsers = @()
-# for more filters, see http://developer.okta.com/docs/api/resources/users.html#list-users-with-a-filter
+    # for more filters, see https://developer.okta.com/docs/api/resources/users#list-users-with-a-filter
     $params = @{filter = 'status eq "ACTIVE"'}
     do {
         $page = Get-OktaUsers @params
@@ -392,7 +394,7 @@ function Get-RateLimits {
 
 
 <#PSScriptInfo
-.VERSION 1.1.10
+.VERSION 1.1.11
 .GUID 33ca8742-b9bf-4824-9d86-605a8d627cb4
 .AUTHOR Gabriel Sroka
 .DESCRIPTION Call Okta API.
