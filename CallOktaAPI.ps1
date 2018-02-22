@@ -43,9 +43,9 @@ function Get-AllMyApps() {
     "$totalApps apps found."
 }
 
-function Get-PagedAppUsers {
+function Get-PagedAppUsers($appid) {
     $totalAppUsers = 0
-    $params = @{appid = "0oa6k5e19jwu8aEAS0h7"; limit = 2}
+    $params = @{appid = $appid}
     do {
         $page = Get-OktaAppUsers @params
         $appusers = $page.objects
@@ -58,9 +58,9 @@ function Get-PagedAppUsers {
     "$totalAppUsers app users found."
 }
 
-function Get-AppGroups {
+function Get-AppGroups($appid) {
     $total = 0
-    $params = @{appid = "0oa7xsre5b8h3ZJwv0h7"}
+    $params = @{appid = $appid}
     do {
         $page = Get-OktaAppGroups @params
         $appgroups = $page.objects
@@ -85,7 +85,7 @@ function Remove-AppUser() {
 
 # Events
 
-function Get-Events {
+function Get-Events() {
     $today = Get-Date -Format "yyyy-MM-dd"
     Get-OktaEvents "$($today)T00:00:00.0-08:00"
     # Get-OktaEvents -filter 'published gt "2015-12-21T16:00:00.0-08:00"'
@@ -93,7 +93,7 @@ function Get-Events {
 
 # Factors
 
-function Enroll-Factor {
+function Enroll-Factor() {
     $userid = ""
     $factor = @{factorType = "token"; provider = "RSA"; profile = @{credentialId = ""}; verify = @{passCode = ""}}
     Set-OktaFactor $userid $factor
@@ -102,7 +102,7 @@ function Enroll-Factor {
 # Groups
 
 # Read groups from CSV and create them in Okta.
-function Create-Groups {
+function Create-Groups() {
     $groups = Import-Csv groups.csv
     $importedGroups = @()
     foreach ($group in $groups) {
@@ -127,9 +127,9 @@ function Create-Groups {
     "$($groups.count) groups read." 
 }
 
-function Get-PagedMembers {
+function Get-PagedMembers() {
     $totalUsers = 0
-    $params = @{id = "00g6fnikz1KOvNPK70h7"; limit = 1; paged = $true}
+    $params = @{id = "00g6fnikz1KOvNPK70h7"; paged = $true}
     do {
         $page = Get-OktaGroupMember @params
         $users = $page.objects
@@ -142,13 +142,13 @@ function Get-PagedMembers {
     "$totalUsers users found."
 }
 
-function Add-GroupMember {
+function Add-GroupMember() {
     $me = Get-OktaUser "me"
     $group = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
     Add-OktaGroupMember $group.id $me.id
 }
 
-function Export-Groups {
+function Export-Groups() {
     $totalGroups = 0
     $exportedGroups = @()
     # type eq "OKTA_GROUP", "APP_GROUP" (including AD/LDAP), or "BUILT_IN" 
@@ -218,7 +218,7 @@ function Flush-File($allLogs, $filePath) {
 # Users
 
 # Read users from CSV, create them in Okta, and add to a group.
-function Import-Users {
+function Import-Users() {
 <# Sample users.csv file with 5 fields. Make sure you include the header line as the first record.
 login,email,firstName,lastName,groupid
 testa1@okta.com,testa1@okta.com,Test,A1,00g5gtwaaeOe7smEF0h7
@@ -253,7 +253,7 @@ testa2@okta.com,testa2@okta.com,Test,A2,00g5gtwaaeOe7smEF0h7
 }
 
 # ~ 1000 users / 6 min in oktapreview.com
-function New-Users {
+function New-Users() {
     $now = Get-Date -Format "yyyyMMddHHmmss"
     for ($i = 1; $i -le 3; $i++) {
         $profile = @{login="a$now$i@okta.com"; email="testuser$i@okta.com"; firstName="test"; lastName="ZExp$i"}
@@ -265,14 +265,14 @@ function New-Users {
     }
 }
 
-function Get-MultipleUsers {
+function Get-MultipleUsers() {
     $ids = "me#jane.doe".split("#")
     foreach ($id in $ids) {
         $user = Get-OktaUser $id
     }
 }
 
-function Get-PagedUsers {
+function Get-PagedUsers() {
     $totalUsers = 0
     $params = @{limit = 200}
     do {
@@ -287,7 +287,7 @@ function Get-PagedUsers {
     "$totalUsers users found."
 }
 
-function Export-Users {
+function Export-Users() {
     $totalUsers = 0
     $exportedUsers = @()
     # for more filters, see https://developer.okta.com/docs/api/resources/users#list-users-with-a-filter
@@ -307,7 +307,7 @@ function Export-Users {
     Write-Host "Done."
 }
 
-function Export-UsersAndGroups {
+function Export-UsersAndGroups() {
     $totalUsers = 0
     $exportedUsers = @()
     # for more filters, see https://developer.okta.com/docs/api/resources/users#list-users-with-a-filter
@@ -332,7 +332,7 @@ function Export-UsersAndGroups {
     "$totalUsers users exported."
 }
 
-function Rename-Users {
+function Rename-Users() {
     $page = Get-OktaUsers -filter 'status eq "DEPROVISIONED"'
     $users = $page.objects
     # $oktaCredUsers = $users | where {$_.credentials.provider.type -eq "OKTA"}
@@ -346,7 +346,7 @@ function Rename-Users {
     "$($users.count) users found."
 }
 
-function Remove-DeprovisionedUsers {
+function Remove-DeprovisionedUsers() {
     $totalUsers = 0
     $params = @{filter = 'status eq "DEPROVISIONED"'}
     do {
@@ -365,7 +365,7 @@ function Remove-DeprovisionedUsers {
 # Rate limits
 
 # https://developer.okta.com/docs/api/getting_started/rate-limits 
-function Get-RateLimits {
+function Get-RateLimits() {
     $urlLimit = 1200 # this varies by URL
     $remaining = $urlLimit
     for ($i = 1; $i -le 5000; $i++) {
