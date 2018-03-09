@@ -2,7 +2,7 @@ $headers = @{}
 $baseUrl = ""
 $userAgent = "OktaAPIWindowsPowerShell/0.1"
 
-# Call this before calling Okta API functions.
+# Call Connect-Okta before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
     $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
     $script:baseUrl = "$baseUrl"
@@ -108,8 +108,8 @@ function Remove-OktaGroupMember($groupid, $userid) {
 
 # Logs - https://developer.okta.com/docs/api/resources/system_log
 
-function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/api/v1/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit") {
-    Invoke-PagedMethod $url
+function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/api/v1/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit", $convert = $true) {
+    Invoke-PagedMethod $url $convert
 }
 
 # Users - https://developer.okta.com/docs/api/resources/users
@@ -162,19 +162,19 @@ function Get-OktaZone($id) {
     Invoke-Method GET "/api/v1/zones/$id"
 }
 
-function Get-OktaZones() {
-    Invoke-PagedMethod "/api/v1/zones"
+function Get-OktaZones($filter, $limit = 20, $url = "/api/v1/zones?filter=$filter&limit=$limit") {
+    Invoke-PagedMethod $url
 }
 
 # Core functions
 
 function Invoke-Method($method, $path, $body) {
     $url = $baseUrl + $path
-    $jsonBody = ConvertTo-Json -compress $body
+    $jsonBody = $body | ConvertTo-Json -compress -Depth 100 # max depth is 100. pipe works better than InputObject
     Invoke-RestMethod $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
 }
 
-function Invoke-PagedMethod($url) {
+function Invoke-PagedMethod($url, $convert = $true) {
     if ($url -notMatch '^http') {$url = $baseUrl + $url}
     $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent
     $links = @{}
@@ -185,7 +185,11 @@ function Invoke-PagedMethod($url) {
             }
         }
     }
-    @{objects = ConvertFrom-Json $response.content
+    $objects = $null
+    if ($convert) {
+        $objects = ConvertFrom-Json $response.content
+    }
+    @{objects = $objects
       nextUrl = $links.next
       response = $response
       limitLimit = [int64]$response.Headers.'X-Rate-Limit-Limit'
