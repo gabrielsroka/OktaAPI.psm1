@@ -6,3 +6,6 @@
 
 # Call this before calling Okta API functions. Replace YOUR_API_TOKEN and YOUR_ORG with your values.
 Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
+
+# see https://www.codyhosterman.com/2016/06/force-the-invoke-restmethod-powershell-cmdlet-to-use-tls-1-2/
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
