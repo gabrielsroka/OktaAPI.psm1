@@ -17,13 +17,26 @@ function Add-SwaApp() {
     $me = Get-OktaUser "me"
     
     # see https://developer.okta.com/docs/api/resources/apps#add-custom-swa-application
-    $app = @{label = "AAA Test App"; settings = @{signOn = @{loginUrl = "https://aaatest.oktapreview.com"}};
-        signOnMode = "AUTO_LOGIN"; visibility = @{autoSubmitToolbar = $false}}
+    $app = @{
+        label = "AAA Test App"
+        settings = @{
+            signOn = @{loginUrl = "https://aaatest.oktapreview.com"}
+        }
+        signOnMode = "AUTO_LOGIN"
+        visibility = @{autoSubmitToolbar = $false}
+    }
     $app = New-OktaApp $app
 
     # see https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
     $appuser = @{id = $me.id; scope = "USER"}
     Add-OktaAppUser $app.id $appuser
+}
+
+function Add-AppUser() {
+    $app = Get-OktaApp "?q=A bookmark app"
+    $me = Get-OktaUser "me"
+    $appuser = @{id = $me.id; scope = "USER"}
+    $appuser = Add-OktaAppUser $app.id $appuser
 }
 
 function Get-AllMyApps() {
@@ -75,10 +88,21 @@ function Get-AppGroups($appid) {
     "$total app groups found."
 }
 
-function Remove-AppUser() {
-    $appid = "0oa9hyyos3VeoXaEG0h7"
+function Set-AppUsers() {
+    $appid = "0oa9eiwx6kh9MRVPB0h7"
 
-    $user = Get-OktaUser "jblues@learnokta.local"
+    $users = Import-Csv appusers.csv
+    foreach ($user in $users) {
+        $appUser = @{
+            credentials = @{userName = $user.userName}
+            scope = "USER"
+        }
+        $updAppUser = Set-OktaAppUser $appid $user.id $appUser
+    }
+}
+
+function Remove-AppUser($appid, $login) {
+    $user = Get-OktaUser $login
     $appUser = Set-OktaAppUser $appid $user.id @{scope = "USER"}
     Remove-OktaAppUser $appid $user.id
 }
@@ -127,9 +151,9 @@ function Create-Groups() {
     "$($groups.count) groups read." 
 }
 
-function Get-PagedMembers() {
+function Get-PagedGroupMembers($groupId) {
     $totalUsers = 0
-    $params = @{id = "00g6fnikz1KOvNPK70h7"; paged = $true}
+    $params = @{id = $groupId; paged = $true}
     do {
         $page = Get-OktaGroupMember @params
         $users = $page.objects
@@ -253,9 +277,9 @@ testa2@okta.com,testa2@okta.com,Test,A2,00g5gtwaaeOe7smEF0h7
 }
 
 # ~ 1000 users / 6 min in oktapreview.com
-function New-Users() {
+function New-Users($numUsers) {
     $now = Get-Date -Format "yyyyMMddHHmmss"
-    for ($i = 1; $i -le 3; $i++) {
+    for ($i = 1; $i -le $numUsers; $i++) {
         $profile = @{login="a$now$i@okta.com"; email="testuser$i@okta.com"; firstName="test"; lastName="ZExp$i"}
         try {
             $user = New-OktaUser @{profile = $profile} $false
@@ -269,6 +293,15 @@ function Get-MultipleUsers() {
     $ids = "me#jane.doe".split("#")
     foreach ($id in $ids) {
         $user = Get-OktaUser $id
+    }
+}
+
+function Get-Me() {
+    try {
+        $me = Get-OktaUser "me"
+        $me
+    } catch {
+        Get-Error $_
     }
 }
 
@@ -360,6 +393,26 @@ function Remove-DeprovisionedUsers() {
         $params = @{url = $page.nextUrl}
     } while ($page.nextUrl)
     "$totalUsers users found."
+}
+
+function Remove-UsersBasedOnGroupMembership($groupId) {
+
+# PERMANENTLY DELETE Okta Users. This won't just remove them from a group.
+
+    $totalUsers = 0
+    $params = @{id = $groupId; paged = $true}
+    do {
+        $page = Get-OktaGroupMember @params
+        $users = $page.objects
+        foreach ($user in $users) {
+            Write-Host $user.profile.login
+            Remove-OktaUser $user.id # First call sets user to DEPROVISIONED.
+            Remove-OktaUser $user.id # Second call deletes user permanently.
+        }
+        $totalUsers += $users.count
+        $params = @{url = $page.nextUrl; paged = $true}
+    } while ($page.nextUrl)
+    "$totalUsers users deleted."
 }
 
 # Rate limits
