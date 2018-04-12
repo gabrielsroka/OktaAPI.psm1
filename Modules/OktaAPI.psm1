@@ -5,7 +5,7 @@ $userAgent = "OktaAPIWindowsPowerShell/0.1"
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
     $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
-    $script:baseUrl = "$baseUrl"
+    $script:baseUrl = $baseUrl
 }
 
 # Apps - https://developer.okta.com/docs/api/resources/apps
@@ -72,7 +72,6 @@ function Set-OktaFactor($userid, $factor) {
 
 # Groups - https://developer.okta.com/docs/api/resources/groups
 
-# $group = New-OktaGroup @{profile = @{name = "a group"; description = "its description"}}
 function New-OktaGroup($group) {
     Invoke-Method POST "/api/v1/groups" $group
 }
@@ -81,7 +80,6 @@ function Get-OktaGroup($id) {
     Invoke-Method GET "/api/v1/groups/$id"
 }
 
-# $groups = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
 function Get-OktaGroups($q, $filter, $limit = 200, $url = "/api/v1/groups?q=$q&filter=$filter&limit=$limit", $paged = $false) {
     if ($paged) {
         Invoke-PagedMethod $url
@@ -112,9 +110,14 @@ function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $li
     Invoke-PagedMethod $url $convert
 }
 
+# Roles - https://developer.okta.com/docs/api/resources/roles
+
+function Get-OktaRoles($id) {
+    Invoke-Method GET "/api/v1/users/$id/roles"
+}
+
 # Users - https://developer.okta.com/docs/api/resources/users
 
-# $user = New-OktaUser @{profile = @{login = $login; email = $email; firstName = $firstName; lastName = $lastName}}
 function New-OktaUser($user, $activate = $true) {
     Invoke-Method POST "/api/v1/users?activate=$activate" $user
 }
@@ -153,7 +156,7 @@ function Set-OktaUserExpirePassword($id) {
 }
 
 function Remove-OktaUser($id) {
-    Invoke-Method DELETE "/api/v1/users/$id"
+    $noContent = Invoke-Method DELETE "/api/v1/users/$id"
 }
 
 # Zones - https://developer.okta.com/docs/api/resources/zones
@@ -194,7 +197,7 @@ function Invoke-PagedMethod($url, $convert = $true) {
       response = $response
       limitLimit = [int64]$response.Headers.'X-Rate-Limit-Limit'
       limitRemaining = [int64]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
-      limitReset = [int64]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset
+      limitReset = [int64]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset, see also [DateTimeOffset]::FromUnixTimeSeconds(limitReset)
     }
 }
 
