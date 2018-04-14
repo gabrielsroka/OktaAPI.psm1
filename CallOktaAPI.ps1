@@ -14,7 +14,7 @@ Import-Module OktaAPI
 # Apps
 
 function Add-SwaApp() {
-    $me = Get-OktaUser "me"
+    $user = Get-OktaUser "me"
     
     # see https://developer.okta.com/docs/api/resources/apps#add-custom-swa-application
     $app = @{
@@ -28,22 +28,22 @@ function Add-SwaApp() {
     $app = New-OktaApp $app
 
     # see https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
-    $appuser = @{id = $me.id; scope = "USER"}
+    $appuser = @{id = $user.id; scope = "USER"}
     Add-OktaAppUser $app.id $appuser
 }
 
 function Add-AppUser() {
     $app = Get-OktaApp "?q=A bookmark app"
-    $me = Get-OktaUser "me"
-    $appuser = @{id = $me.id; scope = "USER"}
+    $user = Get-OktaUser "me"
+    $appuser = @{id = $user.id; scope = "USER"}
     $appuser = Add-OktaAppUser $app.id $appuser
 }
 
 function Get-AllMyApps() {
-    $me = Get-OktaUser "me"
+    $user = Get-OktaUser "me"
 
     $totalApps = 0
-    $params = @{filter = "user.id eq `"$($me.id)`""}
+    $params = @{filter = "user.id eq `"$($user.id)`""}
     do {
         $page = Get-OktaApps @params
         $apps = $page.objects
@@ -88,9 +88,7 @@ function Get-AppGroups($appid) {
     "$total app groups found."
 }
 
-function Set-AppUsers() {
-    $appid = "0oa9eiwx6kh9MRVPB0h7"
-
+function Set-AppUsers($appid) {
     $users = Import-Csv appusers.csv
     foreach ($user in $users) {
         $appUser = @{
@@ -117,8 +115,7 @@ function Get-Events() {
 
 # Factors
 
-function Enroll-Factor() {
-    $userid = ""
+function Set-Factor($userid) {
     $factor = @{factorType = "token"; provider = "RSA"; profile = @{credentialId = ""}; verify = @{passCode = ""}}
     Set-OktaFactor $userid $factor
 }
@@ -126,7 +123,7 @@ function Enroll-Factor() {
 # Groups
 
 # Read groups from CSV and create them in Okta.
-function Create-Groups() {
+function New-Groups() {
     $groups = Import-Csv groups.csv
     $importedGroups = @()
     foreach ($group in $groups) {
@@ -167,9 +164,9 @@ function Get-PagedGroupMembers($groupId) {
 }
 
 function Add-GroupMember() {
-    $me = Get-OktaUser "me"
+    $user = Get-OktaUser "me"
     $group = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
-    Add-OktaGroupMember $group.id $me.id
+    Add-OktaGroupMember $group.id $user.id
 }
 
 function Export-Groups() {
@@ -298,8 +295,8 @@ function Get-MultipleUsers() {
 
 function Get-Me() {
     try {
-        $me = Get-OktaUser "me"
-        $me
+        $user = Get-OktaUser "me"
+        $user
     } catch {
         Get-Error $_
     }
