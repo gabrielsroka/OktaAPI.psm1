@@ -1,6 +1,6 @@
 $headers = @{}
 $baseUrl = ""
-$userAgent = "OktaAPIWindowsPowerShell/0.1"
+$userAgent = "OktaAPIWindowsPowerShell/0.1" # "PowerShell/$($PSVersionTable.PSVersion)"
 
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
@@ -44,6 +44,10 @@ function Set-OktaAppUser($appid, $userid, $appuser) {
 
 function Remove-OktaAppUser($appid, $userid) {
     $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/users/$userid"
+}
+
+function Set-OktaAppGroup($appid, $groupid) {
+    Invoke-Method PUT "/api/v1/apps/$appid/groups/$groupid"
 }
 
 # Events - https://developer.okta.com/docs/api/resources/events
