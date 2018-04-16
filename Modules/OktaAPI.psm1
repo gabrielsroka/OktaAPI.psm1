@@ -46,8 +46,8 @@ function Remove-OktaAppUser($appid, $userid) {
     $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/users/$userid"
 }
 
-function Set-OktaAppGroup($appid, $groupid) {
-    Invoke-Method PUT "/api/v1/apps/$appid/groups/$groupid"
+function Set-OktaAppGroup($appid, $groupid, $group) {
+    Invoke-Method PUT "/api/v1/apps/$appid/groups/$groupid" $group
 }
 
 # Events - https://developer.okta.com/docs/api/resources/events
