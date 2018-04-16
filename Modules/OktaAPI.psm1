@@ -126,7 +126,7 @@ function Get-OktaUser($id) {
     Invoke-Method GET "/api/v1/users/$id"
 }
 
-function Get-OktaUsers($q, $filter, $limit = 200, $url = "/api/v1/users?q=$q&filter=$filter&limit=$limit") {
+function Get-OktaUsers($q, $filter, $limit = 200, $url = "/api/v1/users?q=$q&filter=$filter&limit=$limit&search=$search", $search) {
     Invoke-PagedMethod $url
 }
 
