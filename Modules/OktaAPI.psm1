@@ -34,10 +34,6 @@ function Get-OktaAppUsers($appid, $limit = 20, $url = "/api/v1/apps/$appid/users
     Invoke-PagedMethod $url
 }
 
-function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/groups?limit=$limit") {
-    Invoke-PagedMethod $url
-}
-
 function Set-OktaAppUser($appid, $userid, $appuser) {
     Invoke-Method POST "/api/v1/apps/$appid/users/$userid" $appuser
 }
@@ -46,8 +42,16 @@ function Remove-OktaAppUser($appid, $userid) {
     $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/users/$userid"
 }
 
-function Set-OktaAppGroup($appid, $groupid, $group) {
+function Add-OktaAppGroup($appid, $groupid, $group) {
     Invoke-Method PUT "/api/v1/apps/$appid/groups/$groupid" $group
+}
+
+function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/groups?limit=$limit") {
+    Invoke-PagedMethod $url
+}
+
+function Remove-OktaAppGroup($appid, $groupid) {
+    $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/groups/$groupid"
 }
 
 # Events - https://developer.okta.com/docs/api/resources/events
