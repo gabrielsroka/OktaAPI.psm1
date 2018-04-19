@@ -203,9 +203,9 @@ function Invoke-PagedMethod($url, $convert = $true) {
     @{objects = $objects
       nextUrl = $links.next
       response = $response
-      limitLimit = [int64]$response.Headers.'X-Rate-Limit-Limit'
-      limitRemaining = [int64]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
-      limitReset = [int64]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset, see also [DateTimeOffset]::FromUnixTimeSeconds(limitReset)
+      limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
+      limitRemaining = [int][string]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
+      limitReset = [int][string]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset, see also [DateTimeOffset]::FromUnixTimeSeconds(limitReset)
     }
 }
 
