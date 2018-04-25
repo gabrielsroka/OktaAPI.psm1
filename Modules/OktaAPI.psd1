@@ -12,7 +12,7 @@
 RootModule = 'OktaAPI.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.2'
+ModuleVersion = '1.0.11'
 
 # ID used to uniquely identify this module
 GUID = 'c06d0d63-303b-4c9f-b450-934e9cd18312'
@@ -24,7 +24,7 @@ Author = 'Gabriel Sroka'
 #CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2015 Gabriel Sroka. All rights reserved.'
+Copyright = '(c) 2015-2018 Gabriel Sroka. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'Unofficial code. Call Okta API.'
