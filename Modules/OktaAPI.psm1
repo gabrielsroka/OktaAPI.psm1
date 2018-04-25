@@ -1,11 +1,36 @@
+# With credit to https://github.com/mbegan/Okta-PSModule
+
+# Script vars.
 $headers = @{}
 $baseUrl = ""
-$userAgent = "OktaAPIWindowsPowerShell/0.1" # "PowerShell/$($PSVersionTable.PSVersion)"
+$userAgent = ""
 
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
     $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
     $script:baseUrl = $baseUrl
+
+    $module = Get-Module OktaAPI
+    $modVer = $module.Version.ToString()
+    $psVer = $PSVersionTable.PSVersion
+
+    $osDesc = [Runtime.InteropServices.RuntimeInformation]::OSDescription
+    $osVer = [Environment]::OSVersion.Version.ToString()
+    if ($osDesc -match "Windows") {
+        $os = "Windows"
+    } elseif ($osDesc -match "Linux") {
+        $os = "Linux"
+    } else { # "Darwin" ?
+        $os = "MacOS"
+    }
+
+
+    $script:userAgent = "okta-api-powershell/$modVer powershell/$psVer $os/$osVer"
+    # $script:userAgent = "OktaAPIWindowsPowerShell/0.1" # Old user agent.
+    # default: "Mozilla/5.0 (Windows NT; Windows NT 6.3; en-US) WindowsPowerShell/5.1.14409.1012"
+
+    # see https://www.codyhosterman.com/2016/06/force-the-invoke-restmethod-powershell-cmdlet-to-use-tls-1-2/
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 }
 
 # Apps - https://developer.okta.com/docs/api/resources/apps
@@ -72,6 +97,10 @@ function Get-OktaFactor($userid, $factorid) {
 
 function Get-OktaFactors($userid) {
     Invoke-Method GET "/api/v1/users/$userid/factors"
+}
+
+function Get-OktaFactorsToEnroll($userid) {
+    Invoke-Method GET "/api/v1/users/$userid/factors/catalog"
 }
 
 function Set-OktaFactor($userid, $factor) {
