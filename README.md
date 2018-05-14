@@ -8,7 +8,7 @@
 # OktaAPI.psm1 overview
 Unofficial code. Call Okta API from PowerShell.
 
-This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/documentation/). It converts to/from JSON. It allows you to fetch [pages](https://developer.okta.com/docs/api/getting_started/design_principles#pagination) of objects and check [rate limits](https://developer.okta.com/docs/api/getting_started/rate-limits).
+This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/documentation/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/api/getting_started/design_principles#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/api/getting_started/rate-limits).
 
 It assumes you are familiar with the Okta API and using REST.
 
@@ -41,7 +41,7 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 
 # Adding new endpoints
 
-To add a new endpoint, check the documentation for the HTTP method (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
+To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
 
 For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
 ```
