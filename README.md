@@ -46,7 +46,7 @@ To convert from JSON to PowerShell:
 * Replace `:` with `=`
 * Replace `,` with `;` or you can use a line break instead of `;`
 
-Here is an example from https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
+Here is an example from [Assign User to App](https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso).
 
 **JSON**
 ```json
