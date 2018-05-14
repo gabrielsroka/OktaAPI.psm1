@@ -1,6 +1,15 @@
 # OktaAPI.psm1
 Unofficial code. Call Okta API from PowerShell.
 
+# Sample Code
+```
+Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
+Get-OktaUser me
+```
+
+See CallOktaAPI.ps1 for more samples.
+
+# Installation
 To determine which version of PowerShell you're running, see PSVersion under `$PSVersionTable`.
 
 To Install on PowerShell 5:
