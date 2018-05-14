@@ -11,7 +11,7 @@ This module provides a very thin wrapper around the [Okta API](https://developer
 
 It assumes you are familiar with the Okta API and using REST.
 
-It doesn't cover the entire API. To add a new endpoint, convert the HTTP method and URL from the documentation into a corresponding PowerShell call. For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
+It doesn't cover the entire API. To add a new endpoint, check the documentation for the HTTP method (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL and convert it into a corresponding PowerShell call. For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
 ```
 GET /api/v1/users/${id}
 ```
@@ -22,6 +22,8 @@ function Get-OktaUser($id) {
     Invoke-Method GET "/api/v1/users/$id"
 }
 ```
+
+See OktaAPI.psm1 for more examples.
 
 # Sample Code
 ```powershell
