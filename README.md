@@ -2,7 +2,7 @@
 Unofficial code. Call Okta API from PowerShell.
 
 # Sample Code
-```
+```powershell
 Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
 Get-OktaUser me
 ```
