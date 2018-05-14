@@ -49,7 +49,7 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 To convert from JSON to PowerShell:
 * Replace `{` with `@{`
 * Replace `:` with `=`
-* Replace `,` with `;` (or you can use line-breaks instead of `;`)
+* Replace `,` with `;` or you can use a line break instead of `;`
 
 Here is an example from https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
 
