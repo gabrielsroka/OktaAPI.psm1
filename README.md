@@ -2,8 +2,8 @@
 - [OktaAPI.psm1 overview](#oktaapipsm1-overview)
 - [Sample Code](#sample-code)
 - [Installation](#installation)
-- [Adding new endpoints](#adding-new-endpoints)
 - [Converting JSON to PowerShell](#converting-json-to-powershell)
+- [Adding new endpoints](#adding-new-endpoints)
 
 # OktaAPI.psm1 overview
 Unofficial code. Call Okta API from PowerShell.
@@ -38,24 +38,6 @@ To Install on PowerShell 4 or older:
 Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Users\Administrator\Documents\WindowsPowerShell\Modules\OktaAPI).
 2. Copy OktaAPI.psm1 to the new folder: Modules\OktaAPI
 3. Copy CallOktaAPI.ps1. It has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
-
-# Adding new endpoints
-
-To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
-
-For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
-```
-GET /api/v1/users/${id}
-```
-
-The PowerShell code is:
-```powershell
-function Get-OktaUser($id) {
-    Invoke-Method GET "/api/v1/users/$id"
-}
-```
-
-See OktaAPI.psm1 for more examples.
 
 # Converting JSON to PowerShell
 
@@ -93,3 +75,21 @@ Here is an example from https://developer.okta.com/docs/api/resources/apps#assig
   }
 }
 ```
+
+# Adding new endpoints
+
+To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
+
+For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
+```
+GET /api/v1/users/${id}
+```
+
+The PowerShell code is:
+```powershell
+function Get-OktaUser($id) {
+    Invoke-Method GET "/api/v1/users/$id"
+}
+```
+
+See OktaAPI.psm1 for more examples.
