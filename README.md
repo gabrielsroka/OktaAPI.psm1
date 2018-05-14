@@ -66,7 +66,7 @@ To convert from JSON to PowerShell:
 
 Here is an example from https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
 
-*JSON*
+**JSON**
 ```json
 {
   "id": "00ud4tVDDXYVKPXKVLCO",
@@ -80,7 +80,7 @@ Here is an example from https://developer.okta.com/docs/api/resources/apps#assig
 }
 ```
 
-*PowerShell*
+**PowerShell**
 ```powershell
 @{
   id = "00ud4tVDDXYVKPXKVLCO"
