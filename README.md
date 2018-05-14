@@ -25,7 +25,7 @@ See [CallOktaAPI.ps1](CallOktaAPI.ps1) for more samples.
 # Installation
 To determine which version of PowerShell you're running, see PSVersion under `$PSVersionTable`.
 
-To Install on PowerShell 5:
+**To Install on PowerShell 5 or newer**
 
 ```powershell
 # PowerShell Module [1]
@@ -39,7 +39,7 @@ CallOktaAPI.ps1 has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your v
 1. https://www.powershellgallery.com/packages/OktaAPI
 2. https://www.powershellgallery.com/packages/CallOktaAPI
 
-To Install on PowerShell 4 or older:
+**To Install on PowerShell 4 or older**
 
 1. `$env:PSModulePath` contains a list of folders where modules live (e.g., C:\Users\Administrator\Documents\WindowsPowerShell\Modules). 
 Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Users\Administrator\Documents\WindowsPowerShell\Modules\OktaAPI).
@@ -83,7 +83,7 @@ Here is an example from [Assign User to App](https://developer.okta.com/docs/api
 ```
 
 # Adding new endpoints
-To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
+To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`, `POST`, `PUT`, `DELETE`) and URL, and convert it into a corresponding PowerShell call.
 
 For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
 ```
