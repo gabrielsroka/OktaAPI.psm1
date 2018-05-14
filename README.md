@@ -41,7 +41,9 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 
 # Adding new endpoints
 
-To add a new endpoint, check the documentation for the HTTP method (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call. For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
+To add a new endpoint, check the documentation for the HTTP method (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
+
+For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
 ```
 GET /api/v1/users/${id}
 ```
@@ -64,7 +66,7 @@ To convert from JSON to PowerShell:
 
 Here is an example from https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso
 
-JSON:
+*JSON*
 ```json
 {
   "id": "00ud4tVDDXYVKPXKVLCO",
@@ -78,7 +80,7 @@ JSON:
 }
 ```
 
-PowerShell:
+*PowerShell*
 ```powershell
 @{
   id = "00ud4tVDDXYVKPXKVLCO"
