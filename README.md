@@ -1,18 +1,17 @@
-# Contents
-- [OktaAPI.psm1 overview](#oktaapipsm1-overview)
-- [Sample Code](#sample-code)
-- [Installation](#installation)
-- [Converting JSON to PowerShell](#converting-json-to-powershell)
-- [Adding new endpoints](#adding-new-endpoints)
-
-# OktaAPI.psm1 overview
+# OktaAPI.psm1
 Unofficial code. Call Okta API from PowerShell.
 
 This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/documentation/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/api/getting_started/design_principles#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/api/getting_started/rate-limits).
 
 It assumes you are familiar with the Okta API and using REST.
 
-# Sample Code
+# Contents
+- [Usage](#usage)
+- [Installation](#installation)
+- [Converting JSON to PowerShell](#converting-json-to-powershell)
+- [Adding new endpoints](#adding-new-endpoints)
+
+# Usage
 ```powershell
 Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
 
@@ -21,15 +20,15 @@ $group = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
 Add-OktaGroupMember $group.id $user.id
 ```
 
-See CallOktaAPI.ps1 for more samples.
+See [CallOktaAPI.ps1](CallOktaAPI.ps1) for more samples.
 
 # Installation
 To determine which version of PowerShell you're running, see PSVersion under `$PSVersionTable`.
 
 To Install on PowerShell 5:
 
-1. https://www.powershellgallery.com/packages/OktaAPI
-2. https://www.powershellgallery.com/packages/CallOktaAPI
+1. `Install-Module OktaAPI` https://www.powershellgallery.com/packages/OktaAPI
+2. `Install-Script CallOktaAPI` https://www.powershellgallery.com/packages/CallOktaAPI
 3. CallOktaAPI.ps1 has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
 
 To Install on PowerShell 4 or older:
@@ -40,13 +39,12 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 3. Copy CallOktaAPI.ps1. It has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
 
 # Converting JSON to PowerShell
-
 To convert from JSON to PowerShell:
 * Replace `{` with `@{`
 * Replace `:` with `=`
 * Replace `,` with `;` or you can use a line break instead of `;`
 
-Here is an example from [Assign User to App](https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso).
+Here is an example from [Assign User to App](https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso):
 
 **JSON**
 ```json
@@ -77,7 +75,6 @@ Here is an example from [Assign User to App](https://developer.okta.com/docs/api
 ```
 
 # Adding new endpoints
-
 To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`/`POST`/`PUT`/`DELETE`) and URL, and convert it into a corresponding PowerShell call.
 
 For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
@@ -92,4 +89,4 @@ function Get-OktaUser($id) {
 }
 ```
 
-See OktaAPI.psm1 for more examples.
+See [Modules/OktaAPI.psm1](Modules/OktaAPI.psm1) for more examples.
