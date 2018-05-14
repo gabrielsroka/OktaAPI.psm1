@@ -1,4 +1,10 @@
-# OktaAPI.psm1
+# Contents
+- [OktaAPI.psm1 overview](#oktaapipsm1-overview)
+- [Sample Code](#sample-code)
+- [Installation](#installation)
+- [Converting JSON to PowerShell](#converting-json-to-powershell)
+
+# OktaAPI.psm1 overview
 Unofficial code. Call Okta API from PowerShell.
 
 This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/documentation/). It converts to/from JSON. It allows you to fetch [pages](https://developer.okta.com/docs/api/getting_started/design_principles#pagination) of objects and check [rate limits](https://developer.okta.com/docs/api/getting_started/rate-limits).
