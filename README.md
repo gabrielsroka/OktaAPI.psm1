@@ -27,9 +27,17 @@ To determine which version of PowerShell you're running, see PSVersion under `$P
 
 To Install on PowerShell 5:
 
-1. `Install-Module OktaAPI` https://www.powershellgallery.com/packages/OktaAPI
-2. `Install-Script CallOktaAPI` https://www.powershellgallery.com/packages/CallOktaAPI
-3. CallOktaAPI.ps1 has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
+```powershell
+# PowerShell Module [1]
+Install-Module OktaAPI
+
+# Sample Code [2]
+Install-Script CallOktaAPI
+```
+CallOktaAPI.ps1 has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
+
+1. https://www.powershellgallery.com/packages/OktaAPI
+2. https://www.powershellgallery.com/packages/CallOktaAPI
 
 To Install on PowerShell 4 or older:
 
