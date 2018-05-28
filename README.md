@@ -1,5 +1,5 @@
 # OktaAPI.psm1
-Unofficial code. Call Okta API from PowerShell.
+Call Okta API from PowerShell -- unofficial code.
 
 This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/documentation/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/api/getting_started/design_principles#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/api/getting_started/rate-limits).
 
@@ -32,7 +32,7 @@ Install-Module OktaAPI # [1]
 
 Install-Script CallOktaAPI # [2]
 ```
-CallOktaAPI.ps1 has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
+CallOktaAPI.ps1 has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with your values or use OktaAPISettings.ps1.
 
 [1] https://www.powershellgallery.com/packages/OktaAPI <br>
 [2] https://www.powershellgallery.com/packages/CallOktaAPI
@@ -42,10 +42,10 @@ CallOktaAPI.ps1 has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your v
 1. `$env:PSModulePath` contains a list of folders where modules live (e.g., C:\Users\Administrator\Documents\WindowsPowerShell\Modules). 
 Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Users\Administrator\Documents\WindowsPowerShell\Modules\OktaAPI).
 2. Copy OktaAPI.psm1 to the new folder: Modules\OktaAPI
-3. Copy CallOktaAPI.ps1. It has sample code. Replace YOUR_API_TOKEN and YOUR_ORG with your values or use OktaAPISettings.ps1.
+3. Copy CallOktaAPI.ps1. It has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with your values or use OktaAPISettings.ps1.
 
 # Converting JSON to PowerShell
-To convert from JSON to PowerShell:
+Most Okta API calls come with sample `curl` commands with blocks of JSON. To convert from JSON to PowerShell:
 * Replace `{` with `@{`
 * Replace `:` with `=`
 * Replace `,` with `;` or you can use a line break instead of `;`
