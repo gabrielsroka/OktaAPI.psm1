@@ -107,6 +107,9 @@ function Set-OktaFactor($userid, $factor) {
     Invoke-Method POST "/api/v1/users/$userid/factors" $factor
 }
 
+function Remove-OktaFactor($userid, $factorid) {
+    $noContent = Invoke-Method DELETE "/api/v1/users/$userid/factors/$factorid"
+}
 # Groups - https://developer.okta.com/docs/api/resources/groups
 
 function New-OktaGroup($group) {
