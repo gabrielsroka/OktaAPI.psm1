@@ -293,7 +293,7 @@ function Get-MultipleUsers() {
     }
 }
 
-function Get-Me() {
+function Get-User() {
     try {
         $user = Get-OktaUser "me"
         $user
@@ -326,7 +326,7 @@ function Export-Users() {
         $page = Get-OktaUsers @params
         $users = $page.objects
         foreach ($user in $users) {
-            $exportedUsers += [PSCustomObject]@{id = $user.id; name = $user.profile.login}
+            $exportedUsers += [PSCustomObject]@{id = $user.id; login = $user.profile.login}
         }
         $totalUsers += $users.count
         Write-Host "$totalUsers users"
@@ -353,7 +353,7 @@ function Export-UsersAndGroups() {
                     $groups += $userGroup.profile.name
                 }
             }
-            $exportedUsers += [PSCustomObject]@{id = $user.id; name = $user.profile.login; groups = $groups -join ";"}
+            $exportedUsers += [PSCustomObject]@{id = $user.id; login = $user.profile.login; groups = $groups -join ";"}
         }
         $totalUsers += $users.count
         $params = @{url = $page.nextUrl}
@@ -444,7 +444,7 @@ function Get-RateLimits() {
 
 
 <#PSScriptInfo
-.VERSION 1.1.11
+.VERSION 1.1.12
 .GUID 33ca8742-b9bf-4824-9d86-605a8d627cb4
 .AUTHOR Gabriel Sroka
 .DESCRIPTION Call Okta API.
