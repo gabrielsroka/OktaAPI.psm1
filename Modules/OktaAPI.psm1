@@ -39,7 +39,7 @@ function Set-OktaAppUser($appid, $userid, $appuser) {
 }
 
 function Remove-OktaAppUser($appid, $userid) {
-    $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/users/$userid"
+    $null = Invoke-Method DELETE "/api/v1/apps/$appid/users/$userid"
 }
 
 function Add-OktaAppGroup($appid, $groupid, $group) {
@@ -51,7 +51,7 @@ function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/grou
 }
 
 function Remove-OktaAppGroup($appid, $groupid) {
-    $noContent = Invoke-Method DELETE "/api/v1/apps/$appid/groups/$groupid"
+    $null = Invoke-Method DELETE "/api/v1/apps/$appid/groups/$groupid"
 }
 
 # Events - https://developer.okta.com/docs/api/resources/events
