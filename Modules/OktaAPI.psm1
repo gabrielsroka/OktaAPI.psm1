@@ -1,14 +1,38 @@
+# With credit to https://github.com/mbegan/Okta-PSModule
+
+# Script vars.
 $headers = @{}
 $baseUrl = ""
-$userAgent = "OktaAPIWindowsPowerShell/0.1" # "PowerShell/$($PSVersionTable.PSVersion)"
+$userAgent = ""
 
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
     $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
     $script:baseUrl = $baseUrl
+
+    $module = Get-Module OktaAPI
+    $modVer = $module.Version.ToString()
+    $psVer = $PSVersionTable.PSVersion
+
+    $osDesc = [Runtime.InteropServices.RuntimeInformation]::OSDescription
+    $osVer = [Environment]::OSVersion.Version.ToString()
+    if ($osDesc -match "Windows") {
+        $os = "Windows"
+    } elseif ($osDesc -match "Linux") {
+        $os = "Linux"
+    } else { # "Darwin" ?
+        $os = "MacOS"
+    }
+
+    $script:userAgent = "okta-api-powershell/$modVer powershell/$psVer $os/$osVer"
+    # $script:userAgent = "OktaAPIWindowsPowerShell/0.1" # Old user agent.
+    # default: "Mozilla/5.0 (Windows NT; Windows NT 6.3; en-US) WindowsPowerShell/5.1.14409.1012"
+
+    # see https://www.codyhosterman.com/2016/06/force-the-invoke-restmethod-powershell-cmdlet-to-use-tls-1-2/
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 }
 
-# Apps - https://developer.okta.com/docs/api/resources/apps
+#region Apps - https://developer.okta.com/docs/api/resources/apps
 
 function New-OktaApp($app, $activate = $true) {
     Invoke-Method POST "/api/v1/apps?activate=$activate" $app
@@ -30,7 +54,7 @@ function Get-OktaAppUser($appid, $userid) {
     Invoke-Method GET "/api/v1/apps/$appid/users/$userid"
 }
 
-function Get-OktaAppUsers($appid, $limit = 20, $url = "/api/v1/apps/$appid/users?limit=$limit") {
+function Get-OktaAppUsers($appid, $limit = 50, $url = "/api/v1/apps/$appid/users?limit=$limit") {
     Invoke-PagedMethod $url
 }
 
@@ -53,8 +77,9 @@ function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/grou
 function Remove-OktaAppGroup($appid, $groupid) {
     $null = Invoke-Method DELETE "/api/v1/apps/$appid/groups/$groupid"
 }
+#endregion
 
-# Events - https://developer.okta.com/docs/api/resources/events
+#region Events - https://developer.okta.com/docs/api/resources/events
 
 function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/api/v1/events?startDate=$startDate&filter=$filter&limit=$limit", $paged = $false) {
     if ($paged) {
@@ -63,8 +88,9 @@ function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/api/v1/even
         Invoke-Method GET $url
     }
 }
+#endregion
 
-# Factors (MFA) - https://developer.okta.com/docs/api/resources/factors
+#region Factors (MFA) - https://developer.okta.com/docs/api/resources/factors
 
 function Get-OktaFactor($userid, $factorid) {
     Invoke-Method GET "/api/v1/users/$userid/factors/$factorid"
@@ -74,11 +100,20 @@ function Get-OktaFactors($userid) {
     Invoke-Method GET "/api/v1/users/$userid/factors"
 }
 
+function Get-OktaFactorsToEnroll($userid) {
+    Invoke-Method GET "/api/v1/users/$userid/factors/catalog"
+}
+
 function Set-OktaFactor($userid, $factor) {
     Invoke-Method POST "/api/v1/users/$userid/factors" $factor
 }
 
-# Groups - https://developer.okta.com/docs/api/resources/groups
+function Remove-OktaFactor($userid, $factorid) {
+    $noContent = Invoke-Method DELETE "/api/v1/users/$userid/factors/$factorid"
+}
+#endregion
+
+#region Groups - https://developer.okta.com/docs/api/resources/groups
 
 function New-OktaGroup($group) {
     Invoke-Method POST "/api/v1/groups" $group
@@ -111,20 +146,23 @@ function Add-OktaGroupMember($groupid, $userid) {
 function Remove-OktaGroupMember($groupid, $userid) {
     $noContent = Invoke-Method DELETE "/api/v1/groups/$groupid/users/$userid"
 }
+#endregion
 
-# Logs - https://developer.okta.com/docs/api/resources/system_log
+#region Logs - https://developer.okta.com/docs/api/resources/system_log
 
 function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/api/v1/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit", $convert = $true) {
     Invoke-PagedMethod $url $convert
 }
+#endregion
 
-# Roles - https://developer.okta.com/docs/api/resources/roles
+#region Roles - https://developer.okta.com/docs/api/resources/roles
 
 function Get-OktaRoles($id) {
     Invoke-Method GET "/api/v1/users/$id/roles"
 }
+#endregion
 
-# Users - https://developer.okta.com/docs/api/resources/users
+#region Users - https://developer.okta.com/docs/api/resources/users
 
 function New-OktaUser($user, $activate = $true) {
     Invoke-Method POST "/api/v1/users?activate=$activate" $user
@@ -166,8 +204,9 @@ function Set-OktaUserExpirePassword($id) {
 function Remove-OktaUser($id) {
     $noContent = Invoke-Method DELETE "/api/v1/users/$id"
 }
+#endregion
 
-# Zones - https://developer.okta.com/docs/api/resources/zones
+#region Zones - https://developer.okta.com/docs/api/resources/zones
 
 function Get-OktaZone($id) {
     Invoke-Method GET "/api/v1/zones/$id"
@@ -176,12 +215,17 @@ function Get-OktaZone($id) {
 function Get-OktaZones($filter, $limit = 20, $url = "/api/v1/zones?filter=$filter&limit=$limit") {
     Invoke-PagedMethod $url
 }
+#endregion
 
-# Core functions
+#region Core functions
 
 function Invoke-Method($method, $path, $body) {
     $url = $baseUrl + $path
-    $jsonBody = $body | ConvertTo-Json -compress -Depth 100 # max depth is 100. pipe works better than InputObject
+    if ($body) {
+        $jsonBody = $body | ConvertTo-Json -compress -depth 100 # max depth is 100. pipe works better than InputObject
+        # from https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json
+        # $jsonBody = [System.Text.Encoding]::UTF8.GetBytes($jsonBody)
+    }
     Invoke-RestMethod $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
 }
 
@@ -209,9 +253,24 @@ function Invoke-PagedMethod($url, $convert = $true) {
     }
 }
 
+function Invoke-OktaWebRequest($method, $path, $body) {
+    $url = $baseUrl + $path
+    if ($body) {
+        $jsonBody = $body | ConvertTo-Json -compress -depth 100
+    }
+    $response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
+    @{objects = ConvertFrom-Json $response.content
+      response = $response
+      limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
+      limitRemaining = [int][string]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
+      limitReset = [int][string]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset, see also [DateTimeOffset]::FromUnixTimeSeconds(limitReset)
+    }
+}
+
 function Get-Error($_) {
     $responseStream = $_.Exception.Response.GetResponseStream()
     $responseReader = New-Object System.IO.StreamReader($responseStream)
     $responseContent = $responseReader.ReadToEnd()
     ConvertFrom-Json $responseContent
 }
+#endregion
