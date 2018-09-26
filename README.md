@@ -46,9 +46,11 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 
 # Converting JSON to PowerShell
 Most Okta API calls come with sample `curl` commands with blocks of JSON. To convert from JSON to PowerShell:
-* Replace `{` with `@{`
-* Replace `:` with `=`
-* Replace `,` with `;` or you can use a line break instead of `;`
+* Change `{` to `@{`
+* Change `:` to `=`
+* Change `,` to `;` or use a line break instead
+* Change `[` to `@(`, and `]` to `)`
+* Change `true`, `false` and `null` to `$true`, `$false` and `$null`
 
 Here is an example from [Assign User to App](https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso):
 
