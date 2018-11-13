@@ -104,8 +104,8 @@ function Get-OktaFactorsToEnroll($userid) {
     Invoke-Method GET "/api/v1/users/$userid/factors/catalog"
 }
 
-function Set-OktaFactor($userid, $factor) {
-    Invoke-Method POST "/api/v1/users/$userid/factors" $factor
+function Set-OktaFactor($userid, $factor, $activate = $false) {
+    Invoke-Method POST "/api/v1/users/$userid/factors?activate=$activate" $factor
 }
 
 function Remove-OktaFactor($userid, $factorid) {
