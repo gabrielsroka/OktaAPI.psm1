@@ -115,7 +115,13 @@ function Get-Events() {
 
 # Factors
 
-function Set-Factor($userid) {
+function Set-SMSFactor($userid) {
+    $factor = @{factorType = "sms"; provider = "OKTA"; profile = @{phoneNumber = "+1-562-555-1212"}}
+    $activate = $true # Activate SMS without sending one to the user.
+    Set-OktaFactor $userid $factor $activate
+}
+
+function Set-RSAFactor($userid) {
     $factor = @{factorType = "token"; provider = "RSA"; profile = @{credentialId = ""}; verify = @{passCode = ""}}
     Set-OktaFactor $userid $factor
 }
