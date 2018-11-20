@@ -44,6 +44,11 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 2. Copy OktaAPI.psm1 to the new folder: Modules\OktaAPI
 3. Copy CallOktaAPI.ps1. It has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with your values or use OktaAPISettings.ps1.
 
+**Might I also suggest**
+
+- [PowerShell ISE](https://docs.microsoft.com/en-us/powershell/scripting/core-powershell/ise/introducing-the-windows-powershell-ise) (on Windows)
+- [Visual Studio Code](https://code.visualstudio.com) and the PowerShell Extension (on Windows, [macOS](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos), or Linux). See also [Using VS Code](https://docs.microsoft.com/en-us/powershell/scripting/core-powershell/vscode/using-vscode).
+
 # Converting JSON to PowerShell
 Most Okta API calls come with sample `curl` commands with blocks of JSON. To convert from JSON to PowerShell:
 * Change `{` to `@{`
