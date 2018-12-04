@@ -111,6 +111,51 @@ function Set-OktaFactor($userid, $factor, $activate = $false) {
 function Remove-OktaFactor($userid, $factorid) {
     $noContent = Invoke-Method DELETE "/api/v1/users/$userid/factors/$factorid"
 }
+
+function Remove-OktaFactorWithOptions($userid) {
+    
+    # Place to put the factors
+    $Factors = @()
+    
+    # Get the factors for each user
+    foreach ($Factor in (Get-OktaFactors $userid)) {
+      $Factors += $Factor
+    }
+
+    # Print each factor out with some relevant information so the user can choose
+    for ($i = 0; $i -lt $Factors.Count; $i++) {
+      $TempFactor = $Factors.Get($i)
+      Write-Host "========================"
+      Write-Host
+      Write-Host "Factor Number:  " $i
+      Write-Host "Factor Type:    " $TempFactor.factorType
+      Write-Host "Factor Provider:" $TempFactor.Provider
+      Write-Host "Factor Status:  " $TempFactor.Status
+      Write-Host
+    }
+
+    Write-Host "========================"
+    Write-Host
+
+    # Prompt the user for a factor to reset (checking for the sentinel)
+    $Selection = Read-Host "Enter factor number to reset [Q to exit]"
+    if ($Selection -eq "Q") {
+      Exit
+    }
+
+    # Validate the input with a try/catch
+    try {
+      $FactorToRemove = $Factors.Get($Selection)
+    }
+    catch {
+      Write-Host "Unknown factor number" $Selection
+      Write-Host "Please try again"
+      Exit
+    }
+
+    # Remove the factor
+    Remove-OktaFactor $OktaId $FactorToRemove.Id
+}
 #endregion
 
 #region Groups - https://developer.okta.com/docs/api/resources/groups
