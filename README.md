@@ -47,7 +47,7 @@ Create a new folder in a folder in your module path called OktaAPI (e.g., C:\Use
 **Might I also suggest one of these GUIs/IDEs**
 
 - [PowerShell ISE](https://docs.microsoft.com/en-us/powershell/scripting/core-powershell/ise/introducing-the-windows-powershell-ise) (on Windows). It comes pre-installed with most Windows versions (including Server). It's basic, but better than the command-line.
-- [Visual Studio Code](https://code.visualstudio.com) and the PowerShell Extension (on Windows, [macOS](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos), or Linux). See also [Using VS Code for PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/core-powershell/vscode/using-vscode). It's very powerful, but maybe not as well integrated with PowerShell as the ISE.
+- [Visual Studio Code](https://code.visualstudio.com) and the [PowerShell Extension](https://code.visualstudio.com/docs/languages/powershell) (on Windows, [macOS](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos), or Linux). See also [Using VS Code for PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/core-powershell/vscode/using-vscode). It's very powerful, but maybe not as well integrated with PowerShell as the ISE.
 
 # Converting JSON to PowerShell
 Most Okta API calls come with sample `curl` commands with blocks of JSON. To convert from JSON to PowerShell:
