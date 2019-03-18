@@ -42,7 +42,7 @@ function Get-OktaApp($appid) {
     Invoke-Method GET "/api/v1/apps/$appid"
 }
 
-function Get-OktaApps($filter, $limit = 20, $expand, $url = "/api/v1/apps?filter=$filter&limit=$limit&expand=$expand") {
+function Get-OktaApps($filter, $limit = 20, $expand, $url = "/api/v1/apps?filter=$filter&limit=$limit&expand=$expand&q=$q", $q) {
     Invoke-PagedMethod $url
 }
 
@@ -108,8 +108,12 @@ function Set-OktaFactor($userid, $factor, $activate = $false) {
     Invoke-Method POST "/api/v1/users/$userid/factors?activate=$activate" $factor
 }
 
+function Enable-OktaFactor($userid, $factorid, $body) {
+    Invoke-Method POST "/api/v1/users/$userid/factors/$factorid/lifecycle/activate" $body
+}
+
 function Remove-OktaFactor($userid, $factorid) {
-    $noContent = Invoke-Method DELETE "/api/v1/users/$userid/factors/$factorid"
+    $null = Invoke-Method DELETE "/api/v1/users/$userid/factors/$factorid"
 }
 #endregion
 
@@ -139,12 +143,16 @@ function Get-OktaGroupMember($id, $limit = 200, $url = "/api/v1/groups/$id/users
     }
 }
 
+function Get-OktaGroupApps($id, $limit = 20, $url = "/api/v1/groups/$id/apps?limit=$limit") {
+    Invoke-PagedMethod $url
+}
+
 function Add-OktaGroupMember($groupid, $userid) {
-    $noContent = Invoke-Method PUT "/api/v1/groups/$groupid/users/$userid"
+    $null = Invoke-Method PUT "/api/v1/groups/$groupid/users/$userid"
 }
 
 function Remove-OktaGroupMember($groupid, $userid) {
-    $noContent = Invoke-Method DELETE "/api/v1/groups/$groupid/users/$userid"
+    $null = Invoke-Method DELETE "/api/v1/groups/$groupid/users/$userid"
 }
 #endregion
 
@@ -190,7 +198,7 @@ function Enable-OktaUser($id, $sendEmail = $true) {
 }
 
 function Disable-OktaUser($id) {
-    $noContent = Invoke-Method POST "/api/v1/users/$id/lifecycle/deactivate"
+    $null = Invoke-Method POST "/api/v1/users/$id/lifecycle/deactivate"
 }
 
 function Set-OktaUserResetPassword($id, $sendEmail = $true) {
@@ -202,7 +210,7 @@ function Set-OktaUserExpirePassword($id) {
 }
 
 function Remove-OktaUser($id) {
-    $noContent = Invoke-Method DELETE "/api/v1/users/$id"
+    $null = Invoke-Method DELETE "/api/v1/users/$id"
 }
 #endregion
 
