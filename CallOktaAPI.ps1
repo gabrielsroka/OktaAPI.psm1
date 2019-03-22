@@ -115,10 +115,47 @@ function Get-Events() {
 
 # Factors
 
+function Get-MfaUsers {
+    $totalUsers = 0
+    $mfaUsers = @()
+    # for more filters, see https://developer.okta.com/docs/api/resources/users#list-users-with-a-filter
+    $params = @{filter = 'status eq "ACTIVE"'}
+    do {
+        $page = Get-OktaUsers @params
+        $users = $page.objects
+        foreach ($user in $users) {
+            $factors = Get-OktaFactors $user.id
+
+            $sms = $factors.where({$_.factorType -eq "sms"})
+            $call = $factors.where({$_.factorType -eq "call"})
+
+            $mfaUsers += [PSCustomObject]@{
+                id = $user.id
+                name = $user.profile.login
+                sms = $sms.factorType
+                sms_enrolled = $sms.created
+                sms_status = $sms.status
+                call = $call.factorType
+                call_enrolled = $call.created
+                call_status = $call.status
+            }
+        }
+        $totalUsers += $users.count
+        $params = @{url = $page.nextUrl}
+    } while ($page.nextUrl)
+    $mfaUsers | Export-Csv mfaUsers.csv -notype
+    "$totalUsers users found."
+}
+
 function Set-SMSFactor($userid) {
     $factor = @{factorType = "sms"; provider = "OKTA"; profile = @{phoneNumber = "+1-562-555-1212"}}
     $activate = $true # Activate SMS without sending one to the user.
     Set-OktaFactor $userid $factor $activate
+}
+
+function Enable-SMSFactor($userid, $factorid, $passCode) {
+    # Wait for the user to get an SMS with a passCode, then enable the factor:
+    Enable-OktaFactor $userid $factorid @{passCode = $passCode}
 }
 
 function Set-RSAFactor($userid) {
@@ -130,6 +167,10 @@ function Set-RSAFactor($userid) {
 
 # Read groups from CSV and create them in Okta.
 function New-Groups() {
+<# Sample groups.csv file with 2 fields. Make sure you include the header line as the first record.
+name,description
+PowerShell Group,Members of this group are awesome.
+#>
     $groups = Import-Csv groups.csv
     $importedGroups = @()
     foreach ($group in $groups) {
@@ -148,7 +189,7 @@ function New-Groups() {
                 $message = "Invalid group"
             }
         }
-        $importedGroups += [PSCustomObject]@{id = $oktagroup.id; name = $group.name; message = $message}
+        $importedGroups += [PSCustomObject]@{id = $oktaGroup.id; name = $group.name; message = $message}
     }
     $importedGroups | Export-Csv importedGroups.csv -notype
     "$($groups.count) groups read." 
@@ -244,10 +285,10 @@ function Flush-File($allLogs, $filePath) {
 
 # Users
 
-# Read users from CSV, create them in Okta, and add to a group.
+# Read users from CSV, create them in Okta, and add to a group. See also next function.
 function Import-Users() {
 <# Sample users.csv file with 5 fields. Make sure you include the header line as the first record.
-login,email,firstName,lastName,groupid
+login,email,firstName,lastName,groupId
 testa1@okta.com,testa1@okta.com,Test,A1,00g5gtwaaeOe7smEF0h7
 testa2@okta.com,testa2@okta.com,Test,A2,00g5gtwaaeOe7smEF0h7
 #>
@@ -268,7 +309,7 @@ testa2@okta.com,testa2@okta.com,Test,A2,00g5gtwaaeOe7smEF0h7
         }
         if ($oktaUser) {
             try {
-                Add-OktaGroupMember $user.groupid $oktaUser.id
+                Add-OktaGroupMember $user.groupId $oktaUser.id
             } catch {
                 $message = "Invalid group."
             }
@@ -279,6 +320,21 @@ testa2@okta.com,testa2@okta.com,Test,A2,00g5gtwaaeOe7smEF0h7
     "$($users.count) users read."
 }
 
+# Read users from CSV, create them in Okta, and add to multiple groups. See also previous function.
+function Import-UsersAndGroups() {
+<# Sample CSV file with 5 fields. Make sure you include the header line as the first record.
+login,email,firstName,lastName,groupIds
+testa1@okta.com,testa1@okta.com,Test,A1,"00g5gtwaaeOe7smEF0h7;00g5gtwaaeOe7smFF0h7"
+testa2@okta.com,testa2@okta.com,Test,A2,"00g5gtwaaeOe7smEF0h7;00g5gtwaaeOe7smFF0h7"
+#>
+    $users = Import-Csv usersAndGroups.csv
+    foreach ($user in $users) {
+        $profile = @{login = $user.login; email = $user.email; firstName = $user.firstName; lastName = $user.lastName}
+        $groupIds = $user.groupIds -split ";"
+        $oktaUser = New-OktaUser @{profile = $profile; groupIds = $groupIds}
+    }
+}
+
 # ~ 1000 users / 6 min in oktapreview.com
 function New-Users($numUsers) {
     $now = Get-Date -Format "yyyyMMddHHmmss"
@@ -286,6 +342,7 @@ function New-Users($numUsers) {
         $profile = @{login="a$now$i@okta.com"; email="testuser$i@okta.com"; firstName="test"; lastName="ZExp$i"}
         try {
             $user = New-OktaUser @{profile = $profile} $false
+            Write-Host $i
         } catch {
             Get-Error $_
         }
