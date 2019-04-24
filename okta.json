@@ -1,0 +1,13 @@
+{
+  "categories": [
+    "user management",
+    "authentication",
+    "authorization",
+    "mfa",
+    "hooks",
+    "sso",
+    "integrationNetwork",
+    "socialAuthentication",
+    "apiAuthentication"
+  ]
+}
