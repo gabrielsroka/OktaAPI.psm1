@@ -156,6 +156,13 @@ function Remove-OktaGroupMember($groupid, $userid) {
 }
 #endregion
 
+#region IdPs - https://developer.okta.com/docs/api/resources/idps
+
+function Get-OktaIdps($q, $type, $limit = 20, $url = "/api/v1/idps?q=$q&type=$type&limit=$limit") {
+    Invoke-PagedMethod $url
+}
+#endregion
+
 #region Logs - https://developer.okta.com/docs/api/resources/system_log
 
 function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/api/v1/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit", $convert = $true) {
