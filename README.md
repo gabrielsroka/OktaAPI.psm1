@@ -1,7 +1,7 @@
 # OktaAPI.psm1
 Call Okta API from PowerShell -- unofficial code.
 
-This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/documentation/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/api/getting_started/design_principles#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/api/getting_started/rate-limits).
+This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/docs/reference/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/reference/api-overview/#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/reference/rate-limits).
 
 It assumes you are familiar with the Okta API and using REST.
 
@@ -57,7 +57,7 @@ Most Okta API calls come with sample `curl` commands with blocks of JSON. To con
 * Change `[` to `@(`, and `]` to `)`
 * Change `true`, `false` and `null` to `$true`, `$false` and `$null`
 
-Here is an example from [Assign User to App](https://developer.okta.com/docs/api/resources/apps#assign-user-to-application-for-sso):
+Here is an example from [Assign User to App](https://developer.okta.com/docs/reference/api/apps/#assign-user-to-application-for-sso):
 
 **JSON**
 ```json
@@ -88,9 +88,9 @@ Here is an example from [Assign User to App](https://developer.okta.com/docs/api
 ```
 
 # Adding new endpoints
-To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/api/getting_started/design_principles#http-verbs) (e.g. `GET`, `POST`, `PUT`, `DELETE`) and URL, and convert it into a corresponding PowerShell call.
+To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/reference/api-overview/#http-verbs) (e.g. `GET`, `POST`, `PUT`, `DELETE`) and URL, and convert it into a corresponding PowerShell call.
 
-For example, the documentation for [Get User](https://developer.okta.com/docs/api/resources/users#get-user) says:
+For example, the documentation for [Get User](https://developer.okta.com/docs/reference/api/users/#get-user) says:
 ```
 GET /api/v1/users/${id}
 ```
