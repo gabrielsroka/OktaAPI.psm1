@@ -341,7 +341,7 @@ function New-Users($numUsers) {
     for ($i = 1; $i -le $numUsers; $i++) {
         $profile = @{login="a$now$i@okta.com"; email="testuser$i@okta.com"; firstName="test"; lastName="ZExp$i"}
         try {
-            $user = New-OktaUser @{profile = $profile} $false
+            $user = New-OktaUser @{profile = $profile; credentials = @{password = @{value = "Password123"}}} $false
             Write-Host $i
         } catch {
             Get-Error $_
@@ -475,9 +475,29 @@ function Remove-UsersBasedOnGroupMembership($groupId) {
     "$totalUsers users deleted."
 }
 
+# Zones
+
+function New-Zone() {
+    $zone = @{
+        type = "IP"
+        name = "test"
+        gateways = @(
+            @{
+                type = "RANGE"
+                value = "1.2.3.4"
+            },
+            @{
+                type = "CIDR"
+                value = "5.6.7.8/24"
+            }
+        )
+    }
+    New-OktaZone $zone
+}
+
 # Rate limits
 
-# https://developer.okta.com/docs/api/getting_started/rate-limits 
+# https://developer.okta.com/docs/reference/rate-limits
 function Get-RateLimits() {
     $urlLimit = 1200 # this varies by URL
     $remaining = $urlLimit
