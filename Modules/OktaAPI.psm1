@@ -54,7 +54,7 @@ function Get-OktaAppUser($appid, $userid) {
     Invoke-Method GET "/api/v1/apps/$appid/users/$userid"
 }
 
-function Get-OktaAppUsers($appid, $limit = 50, $url = "/api/v1/apps/$appid/users?limit=$limit") {
+function Get-OktaAppUsers($appid, $limit = 50, $url = "/api/v1/apps/$appid/users?limit=$limit&expand=$expand", $expand) {
     Invoke-PagedMethod $url
 }
 
