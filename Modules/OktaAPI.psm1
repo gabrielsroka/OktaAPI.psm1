@@ -196,6 +196,10 @@ function Set-OktaUser($id, $user) {
     Invoke-Method POST "/api/v1/users/$id" $user
 }
 
+function Get-OktaUserAppLinks($id) {
+    Invoke-Method GET "/api/v1/users/$id/appLinks"
+}
+
 function Get-OktaUserGroups($id) {
     Invoke-Method GET "/api/v1/users/$id/groups"
 }
