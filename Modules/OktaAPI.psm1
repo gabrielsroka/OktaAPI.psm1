@@ -123,6 +123,10 @@ function New-OktaGroup($group) {
     Invoke-Method POST "/api/v1/groups" $group
 }
 
+function New-OktaGroupRule($groupRule) {
+    Invoke-Method POST "/api/v1/groups/rules" $groupRule
+}
+
 function Get-OktaGroup($id) {
     Invoke-Method GET "/api/v1/groups/$id"
 }
@@ -144,6 +148,10 @@ function Get-OktaGroupMember($id, $limit = 200, $url = "/api/v1/groups/$id/users
 }
 
 function Get-OktaGroupApps($id, $limit = 20, $url = "/api/v1/groups/$id/apps?limit=$limit") {
+    Invoke-PagedMethod $url
+}
+
+function Get-OktaGroupRules($limit = 50, $url = "/api/v1/groups/rules?limit=$limit") {
     Invoke-PagedMethod $url
 }
 
