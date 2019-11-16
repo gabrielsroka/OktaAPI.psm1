@@ -31,7 +31,7 @@ $group = New-OktaGroup @{profile = $profile}
 
 See [CallOktaAPI.ps1](CallOktaAPI.ps1) for more examples.
 
-There are functions for Apps, Events, Factors, Groups, IdPs, Logs, Roles, Users and Zones. And you can [add your own](#adding-new-endpoints).
+There are functions for Apps, Events, Factors, Groups, IdPs, Logs, Roles, Schemas, Users and Zones. And you can [add your own](#adding-new-endpoints).
 
 # Installation
 To determine which version of PowerShell you're running, see PSVersion under `$PSVersionTable`.
