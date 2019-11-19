@@ -1,8 +1,8 @@
 #Requires -Module OktaAPI
 Import-Module OktaAPI
 
-# $token comes from Okta Admin > Security > API > Tokens > Create Token
-# see https://developer.okta.com/docs/api/getting_started/getting_a_token
+# API token comes from Okta Admin > Security > API > Tokens > Create Token
+# see https://developer.okta.com/docs/guides/create-an-api-token
 
 # Call Connect-Okta before calling Okta API functions. Replace YOUR_API_TOKEN and YOUR_ORG with your values.
 # Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
@@ -115,7 +115,7 @@ function Get-Events() {
 
 # Factors
 
-function Get-MfaUsers {
+function Get-MfaUsers() {
     $totalUsers = 0
     $mfaUsers = @()
     # for more filters, see https://developer.okta.com/docs/api/resources/users#list-users-with-a-filter
@@ -527,7 +527,8 @@ function Get-RateLimits() {
 
 
 <#PSScriptInfo
-.VERSION 1.1.12
+.VERSION 1.1.13
+.COPYRIGHT (c) 2015-2019 Gabriel Sroka. All rights reserved.
 .GUID 33ca8742-b9bf-4824-9d86-605a8d627cb4
 .AUTHOR Gabriel Sroka
 .DESCRIPTION Call Okta API.
