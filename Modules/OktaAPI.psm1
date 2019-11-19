@@ -32,7 +32,7 @@ function Connect-Okta($token, $baseUrl) {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 }
 
-#region Apps - https://developer.okta.com/docs/api/resources/apps
+#region Apps - https://developer.okta.com/docs/reference/api/apps
 
 function New-OktaApp($app, $activate = $true) {
     Invoke-Method POST "/api/v1/apps?activate=$activate" $app
@@ -70,7 +70,7 @@ function Add-OktaAppGroup($appid, $groupid, $group) {
     Invoke-Method PUT "/api/v1/apps/$appid/groups/$groupid" $group
 }
 
-function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/groups?limit=$limit") {
+function Get-OktaAppGroups($appid, $limit = 20, $url = "/api/v1/apps/$appid/groups?limit=$limit&expand=$expand", $expand) {
     Invoke-PagedMethod $url
 }
 
@@ -79,7 +79,7 @@ function Remove-OktaAppGroup($appid, $groupid) {
 }
 #endregion
 
-#region Events - https://developer.okta.com/docs/api/resources/events
+#region Events - https://developer.okta.com/docs/reference/api/events
 
 function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/api/v1/events?startDate=$startDate&filter=$filter&limit=$limit", $paged = $false) {
     if ($paged) {
@@ -90,7 +90,7 @@ function Get-OktaEvents($startDate, $filter, $limit = 1000, $url = "/api/v1/even
 }
 #endregion
 
-#region Factors (MFA) - https://developer.okta.com/docs/api/resources/factors
+#region Factors (MFA) - https://developer.okta.com/docs/reference/api/factors
 
 function Get-OktaFactor($userid, $factorid) {
     Invoke-Method GET "/api/v1/users/$userid/factors/$factorid"
@@ -117,7 +117,7 @@ function Remove-OktaFactor($userid, $factorid) {
 }
 #endregion
 
-#region Groups - https://developer.okta.com/docs/api/resources/groups
+#region Groups - https://developer.okta.com/docs/reference/api/groups
 
 function New-OktaGroup($group) {
     Invoke-Method POST "/api/v1/groups" $group
@@ -164,28 +164,39 @@ function Remove-OktaGroupMember($groupid, $userid) {
 }
 #endregion
 
-#region IdPs - https://developer.okta.com/docs/api/resources/idps
+#region IdPs - https://developer.okta.com/docs/reference/api/idps
 
 function Get-OktaIdps($q, $type, $limit = 20, $url = "/api/v1/idps?q=$q&type=$type&limit=$limit") {
     Invoke-PagedMethod $url
 }
 #endregion
 
-#region Logs - https://developer.okta.com/docs/api/resources/system_log
+#region Logs - https://developer.okta.com/docs/reference/api/system-log
 
 function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $limit = 100, $url = "/api/v1/logs?since=$since&until=$until&filter=$filter&q=$q&sortOrder=$sortOrder&limit=$limit", $convert = $true) {
     Invoke-PagedMethod $url $convert
 }
 #endregion
 
-#region Roles - https://developer.okta.com/docs/api/resources/roles
+#region Roles - https://developer.okta.com/docs/reference/api/roles
 
 function Get-OktaRoles($id) {
     Invoke-Method GET "/api/v1/users/$id/roles"
 }
 #endregion
 
-#region Users - https://developer.okta.com/docs/api/resources/users
+#region Schemas - https://developer.okta.com/docs/reference/api/schemas
+
+function New-OktaSchema($schema) {
+    Invoke-Method POST "/api/v1/meta/schemas/user/default" $schema
+}
+
+function Get-OktaSchemas() {
+    Invoke-Method GET "/api/v1/meta/schemas/user/default"
+}
+#endregion
+
+#region Users - https://developer.okta.com/docs/reference/api/users
 
 function New-OktaUser($user, $activate = $true) {
     Invoke-Method POST "/api/v1/users?activate=$activate" $user
@@ -233,7 +244,11 @@ function Remove-OktaUser($id) {
 }
 #endregion
 
-#region Zones - https://developer.okta.com/docs/api/resources/zones
+#region Zones - https://developer.okta.com/docs/reference/api/zones
+
+function New-OktaZone($zone) {
+    Invoke-Method POST "/api/v1/zones" $zone
+}
 
 function Get-OktaZone($id) {
     Invoke-Method GET "/api/v1/zones/$id"
