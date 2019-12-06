@@ -29,7 +29,8 @@ $user = New-OktaUser @{profile = $profile}
 $profile = @{name = $name; description = $description}
 $group = New-OktaGroup @{profile = $profile}
 
-# Paginate through all users. See this page for more info:
+# Get all users. If you have more than 200 users, you have to use pagination.
+# See this page for more info:
 # https://developer.okta.com/docs/reference/api-overview/#pagination
 $params = @{filter = 'status eq "ACTIVE"'}
 do {
