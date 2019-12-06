@@ -13,6 +13,7 @@ It assumes you are familiar with the Okta API and using REST.
 
 # Usage
 ```powershell
+# Connect to Okta. Do this before making any other calls.
 Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
 
 # Add a user to a group.
@@ -27,6 +28,18 @@ $user = New-OktaUser @{profile = $profile}
 # Create a group.
 $profile = @{name = $name; description = $description}
 $group = New-OktaGroup @{profile = $profile}
+
+# Paginate through all users.
+$params = @{filter = 'status eq "ACTIVE"'}
+do {
+    $page = Get-OktaUsers @params
+    $users = $page.objects
+    foreach ($user in $users) {
+        # Add more properties here:
+        Write-Host $user.profile.login $user.profile.email
+    }
+    $params = @{url = $page.nextUrl}
+} while ($page.nextUrl)
 ```
 
 See [CallOktaAPI.ps1](CallOktaAPI.ps1) for more examples.
