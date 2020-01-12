@@ -273,7 +273,14 @@ function Invoke-Method($method, $path, $body) {
 
 function Invoke-PagedMethod($url, $convert = $true) {
     if ($url -notMatch '^http') {$url = $baseUrl + $url}
-    $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent
+	if ($PSVersionTable.PSVersion.Major -lt 6)
+	{
+		$response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent -UseBasicParsing
+	}
+	else
+	{
+		$response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent
+	}
     $links = @{}
     if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
         foreach ($header in $response.Headers.Link.split(",")) {
@@ -300,7 +307,14 @@ function Invoke-OktaWebRequest($method, $path, $body) {
     if ($body) {
         $jsonBody = $body | ConvertTo-Json -compress -depth 100
     }
-    $response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
+	if ($PSVersionTable.PSVersion.Major -lt 6)
+	{
+		$response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
+	}
+	else
+	{
+		$response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
+	}
     @{objects = ConvertFrom-Json $response.content
       response = $response
       limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
