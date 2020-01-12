@@ -268,12 +268,12 @@ function Invoke-Method($method, $path, $body) {
         # from https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json
         # $jsonBody = [System.Text.Encoding]::UTF8.GetBytes($jsonBody)
     }
-    Invoke-RestMethod $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
+    Invoke-RestMethod $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
 }
 
 function Invoke-PagedMethod($url, $convert = $true) {
     if ($url -notMatch '^http') {$url = $baseUrl + $url}
-    $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent
+    $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent -UseBasicParsing
     $links = @{}
     if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
         foreach ($header in $response.Headers.Link.split(",")) {
@@ -300,7 +300,7 @@ function Invoke-OktaWebRequest($method, $path, $body) {
     if ($body) {
         $jsonBody = $body | ConvertTo-Json -compress -depth 100
     }
-    $response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent
+    $response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
     @{objects = ConvertFrom-Json $response.content
       response = $response
       limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
