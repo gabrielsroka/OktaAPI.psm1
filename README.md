@@ -1,7 +1,7 @@
 # OktaAPI.psm1
 Call the Okta API from PowerShell -- unofficial code.
 
-This module provides a very thin wrapper around the [Okta API](https://developer.okta.com/docs/reference/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/reference/api-overview/#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/reference/rate-limits/).
+This module provides a thin wrapper around the [Okta API](https://developer.okta.com/docs/reference/). It converts to/from JSON. It supports [pagination](https://developer.okta.com/docs/reference/api-overview/#pagination) of objects and allows you to check [rate limits](https://developer.okta.com/docs/reference/rate-limits/).
 
 It assumes you are familiar with the Okta API and using REST.
 
@@ -65,12 +65,12 @@ CallOktaAPI.ps1 has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with yo
 
 **To Install on PowerShell 4 or older**
 
-1. `$env:PSModulePath` contains a list of folders where modules live (e.g., `C:\Users\Administrator\Documents\WindowsPowerShell\Modules`). 
+1. `$env:PSModulePath` contains a list of folders where modules are located (e.g., `C:\Users\Administrator\Documents\WindowsPowerShell\Modules`). 
 Create a new folder in a folder in your module path called OktaAPI (e.g., `C:\Users\Administrator\Documents\WindowsPowerShell\Modules\OktaAPI`).
 2. Copy OktaAPI.psm1 to the new folder: Modules\OktaAPI
 3. Copy CallOktaAPI.ps1. It has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with your values or use OktaAPISettings.ps1.
 
-**Might I also suggest a GUI/IDE and debugging tools**
+**Might I also suggest an IDE and debugging tools**
 
 - [Visual Studio Code](https://code.visualstudio.com) and the [PowerShell Extension](https://code.visualstudio.com/docs/languages/powershell) (on Windows, [macOS](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos), or Linux). See also [Using VS Code for PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/components/vscode/using-vscode).
 - [PowerShell ISE](https://docs.microsoft.com/en-us/powershell/scripting/components/ise/introducing-the-windows-powershell-ise) (Windows-only). It comes pre-installed with most Windows versions (including Server). It's basic, but better than the command-line. It's in maintenance mode and no new features are likely to be added, so you might consider Visual Studio Code.
