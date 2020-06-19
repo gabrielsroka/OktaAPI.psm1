@@ -219,8 +219,12 @@ function Get-OktaUserAppLinks($id) {
     Invoke-Method GET "/api/v1/users/$id/appLinks"
 }
 
-function Get-OktaUserGroups($id) {
-    Invoke-Method GET "/api/v1/users/$id/groups"
+function Get-OktaUserGroups($id, $limit = 200, $url = "/api/v1/users/$id/groups?limit=$limit", $paged = $false) {
+    if ($paged) {
+        Invoke-PagedMethod $url
+    } else {
+        Invoke-Method GET $url
+    }
 }
 
 function Enable-OktaUser($id, $sendEmail = $true) {
