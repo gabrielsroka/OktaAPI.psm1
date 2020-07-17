@@ -139,6 +139,10 @@ function Get-OktaGroups($q, $filter, $limit = 200, $url = "/api/v1/groups?q=$q&f
     }
 }
 
+function Remove-OktaGroup($id) {
+    $null = Invoke-Method DELETE "/api/v1/groups/$id"
+}
+
 function Get-OktaGroupMember($id, $limit = 200, $url = "/api/v1/groups/$id/users?limit=$limit", $paged = $false) {
     if ($paged) {
         Invoke-PagedMethod $url
@@ -153,6 +157,10 @@ function Get-OktaGroupApps($id, $limit = 20, $url = "/api/v1/groups/$id/apps?lim
 
 function Get-OktaGroupRules($limit = 50, $url = "/api/v1/groups/rules?limit=$limit") {
     Invoke-PagedMethod $url
+}
+
+function Enable-OktaGroupRule($ruleid) {
+    Invoke-Method POST "/api/v1/groups/rules/$ruleid/lifecycle/activate"
 }
 
 function Add-OktaGroupMember($groupid, $userid) {
@@ -241,6 +249,10 @@ function Set-OktaUserResetPassword($id, $sendEmail = $true) {
 
 function Set-OktaUserExpirePassword($id) {
     Invoke-Method POST "/api/v1/users/$id/lifecycle/expire_password"
+}
+
+function Set-OktaUserUnlocked($id) {
+    Invoke-Method POST "/api/v1/users/$id/lifecycle/unlock"
 }
 
 function Remove-OktaUser($id) {
