@@ -494,7 +494,15 @@ function Get-OktaUsers {
         [Parameter(Mandatory = $false)]
         [string]$search
     )
-    Invoke-PagedMethod "/api/v1/users?q=$q&filter=$filter&limit=$limit&search=$search"
+    $AllUsers = @()
+    $Url = "/api/v1/users?q=$q&filter=$filter&limit=$limit&search=$search"
+    do {
+        $Return = Invoke-PagedMethod $Url
+        $AllUsers += $Return.objects
+        $Url = $Return.nextUrl
+    } while ($Return.nextUrl)
+
+    $AllUsers
 }
 
 function Set-OktaUser {
