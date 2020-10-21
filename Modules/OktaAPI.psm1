@@ -295,9 +295,9 @@ function Get-OktaGroup {
 function Get-OktaGroups {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$q,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$filter,
         [Parameter(Mandatory = $false)]
         [int]$limit = 200,
