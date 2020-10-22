@@ -295,9 +295,9 @@ function Get-OktaGroup {
 function Get-OktaGroups {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$q,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$filter,
         [Parameter(Mandatory = $false)]
         [int]$limit = 200,
@@ -647,27 +647,36 @@ function Invoke-Method($method, $path, $body) {
 }
 
 function Invoke-PagedMethod($url, $convert = $true) {
-    if ($url -notMatch '^http') {$url = $baseUrl + $url}
-    $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent -UseBasicParsing
-    $links = @{}
-    if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
-        foreach ($header in $response.Headers.Link.split(",")) {
-            if ($header -match '<(.*)>; rel="(.*)"') {
-                $links[$matches[2]] = $matches[1]
+    $output = @()
+    do {
+        if ($url -notMatch '^http') {$url = $baseUrl + $url}
+        $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent -UseBasicParsing
+        $links = @{}
+        if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
+            foreach ($header in $response.Headers.Link.split(",")) {
+                if ($header -match '<(.*)>; rel="(.*)"') {
+                    $links[$matches[2]] = $matches[1]
+                }
             }
         }
-    }
-    $objects = $null
-    if ($convert) {
-        $objects = ConvertFrom-Json $response.content
-    }
-    @{objects = $objects
-      nextUrl = $links.next
-      response = $response
-      limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
-      limitRemaining = [int][string]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
-      limitReset = [int][string]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset, see also [DateTimeOffset]::FromUnixTimeSeconds(limitReset)
-    }
+        $objects = $null
+        if ($convert) {
+            $objects = ConvertFrom-Json $response.content
+        }
+        $loopOutput = @{
+            objects = $objects
+            nextUrl = $links.next
+            response = $response
+            limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
+            limitRemaining = [int][string]$response.Headers.'X-Rate-Limit-Remaining' # how many calls are remaining
+            limitReset = [int][string]$response.Headers.'X-Rate-Limit-Reset' # when limit will reset, see also [DateTimeOffset]::FromUnixTimeSeconds(limitReset)
+        }
+
+        $output += $loopOutput.objects
+        $url = $loopOutput.nextUrl
+    } while ($loopOutput.nextUrl)
+
+    $output
 }
 
 function Invoke-OktaWebRequest($method, $path, $body) {
