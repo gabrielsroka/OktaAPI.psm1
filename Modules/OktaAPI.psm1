@@ -7,6 +7,7 @@ $userAgent = ""
 
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta {
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
         [string]$token,
