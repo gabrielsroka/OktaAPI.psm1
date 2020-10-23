@@ -7,6 +7,7 @@ $userAgent = ""
 
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta {
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
         [string]$token,
@@ -320,7 +321,6 @@ function Remove-OktaGroup {
     $null = Invoke-Method DELETE "/api/v1/groups/$id"
 }
 
-# Continue Work Here
 function Get-OktaGroupMember {
     [CmdletBinding()]
     param(
@@ -395,9 +395,9 @@ function Remove-OktaGroupMember {
 function Get-OktaIdps {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$q,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$type,
         [Parameter(Mandatory = $false)]
         [int]$limit = 20
@@ -411,13 +411,13 @@ function Get-OktaIdps {
 function Get-OktaLogs {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$since,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$until,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$filter,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$q,
         [Parameter(Mandatory = $false)]
         [string]$sortOrder = "ASCENDING",
@@ -625,7 +625,7 @@ function Get-OktaZone {
 function Get-OktaZones {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]$filter,
         [Parameter(Mandatory = $false)]
         [int]$limit = 20
