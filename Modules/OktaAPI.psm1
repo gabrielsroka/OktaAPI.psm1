@@ -27,9 +27,6 @@ function Connect-Okta($token, $baseUrl) {
     $script:userAgent = "okta-api-powershell/$modVer powershell/$psVer $os/$osVer"
     # $script:userAgent = "OktaAPIWindowsPowerShell/0.1" # Old user agent.
     # default: "Mozilla/5.0 (Windows NT; Windows NT 6.3; en-US) WindowsPowerShell/5.1.14409.1012"
-
-    # see https://www.codyhosterman.com/2016/06/force-the-invoke-restmethod-powershell-cmdlet-to-use-tls-1-2/
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 }
 
 #region Apps - https://developer.okta.com/docs/reference/api/apps
@@ -284,12 +281,19 @@ function Invoke-Method($method, $path, $body) {
         # from https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json
         # $jsonBody = [System.Text.Encoding]::UTF8.GetBytes($jsonBody)
     }
+
+    $SecurityProtocolBackup = [Net.ServicePointManager]::SecurityProtocol
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-RestMethod $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
+    [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocolBackup
 }
 
 function Invoke-PagedMethod($url, $convert = $true) {
     if ($url -notMatch '^http') {$url = $baseUrl + $url}
+    $SecurityProtocolBackup = [Net.ServicePointManager]::SecurityProtocol
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent -UseBasicParsing
+    [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocolBackup
     $links = @{}
     if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
         foreach ($header in $response.Headers.Link.split(",")) {
@@ -316,7 +320,10 @@ function Invoke-OktaWebRequest($method, $path, $body) {
     if ($body) {
         $jsonBody = $body | ConvertTo-Json -compress -depth 100
     }
+    $SecurityProtocolBackup = [Net.ServicePointManager]::SecurityProtocol
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
+    [Net.ServicePointManager]::SecurityProtocol = $SecurityProtocolBackup
     @{objects = ConvertFrom-Json $response.content
       response = $response
       limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
