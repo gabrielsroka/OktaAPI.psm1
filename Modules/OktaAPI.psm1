@@ -30,6 +30,12 @@ function Connect-Okta($token, $oktaBaseUrl) {
 
     # see https://www.codyhosterman.com/2016/06/force-the-invoke-restmethod-powershell-cmdlet-to-use-tls-1-2/
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+    try {
+        Get-OktaUsers "test@test.com" | Out-Null
+    } catch {
+        throw "Connection not successful. Please verify API token and URL."
+    }
 }
 
 #region Apps - https://developer.okta.com/docs/reference/api/apps
