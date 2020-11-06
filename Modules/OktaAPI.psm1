@@ -34,6 +34,9 @@ function Connect-Okta($token, $oktaBaseUrl) {
     try {
         Get-OktaUsers "test@test.com" | Out-Null
     } catch {
+        $script:oktaHeaders = @{}
+        $script:oktaBaseUrl = ""
+        $script:oktaUserAgent = ""
         throw "Connection not successful. Please verify API token and URL."
     }
 }
