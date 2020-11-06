@@ -1,14 +1,14 @@
 # With credit to https://github.com/mbegan/Okta-PSModule
 
 # Script vars.
-$headers = @{}
-$baseUrl = ""
-$userAgent = ""
+$oktaHeaders = @{}
+$oktaBaseUrl = ""
+$oktaUserAgent = ""
 
 # Call Connect-Okta before calling Okta API functions.
-function Connect-Okta($token, $baseUrl) {
-    $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
-    $script:baseUrl = $baseUrl
+function Connect-Okta($token, $oktaBaseUrl) {
+    $script:oktaHeaders = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
+    $script:oktaBaseUrl = $oktaBaseUrl
 
     $module = Get-Module OktaAPI
     $modVer = $module.Version.ToString()
@@ -24,8 +24,8 @@ function Connect-Okta($token, $baseUrl) {
         $os = "MacOS"
     }
 
-    $script:userAgent = "okta-api-powershell/$modVer powershell/$psVer $os/$osVer"
-    # $script:userAgent = "OktaAPIWindowsPowerShell/0.1" # Old user agent.
+    $script:oktaUserAgent = "okta-api-powershell/$modVer powershell/$psVer $os/$osVer"
+    # $script:oktaUserAgent = "OktaAPIWindowsPowerShell/0.1" # Old user agent.
     # default: "Mozilla/5.0 (Windows NT; Windows NT 6.3; en-US) WindowsPowerShell/5.1.14409.1012"
 
     # see https://www.codyhosterman.com/2016/06/force-the-invoke-restmethod-powershell-cmdlet-to-use-tls-1-2/
@@ -278,18 +278,18 @@ function Get-OktaZones($filter, $limit = 20, $url = "/api/v1/zones?filter=$filte
 #region Core functions
 
 function Invoke-Method($method, $path, $body) {
-    $url = $baseUrl + $path
+    $url = $oktaBaseUrl + $path
     if ($body) {
         $jsonBody = $body | ConvertTo-Json -compress -depth 100 # max depth is 100. pipe works better than InputObject
         # from https://stackoverflow.com/questions/15290185/invoke-webrequest-issue-with-special-characters-in-json
         # $jsonBody = [System.Text.Encoding]::UTF8.GetBytes($jsonBody)
     }
-    Invoke-RestMethod $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
+    Invoke-RestMethod $url -Method $method -Headers $oktaHeaders -Body $jsonBody -UserAgent $oktaUserAgent -UseBasicParsing
 }
 
 function Invoke-PagedMethod($url, $convert = $true) {
-    if ($url -notMatch '^http') {$url = $baseUrl + $url}
-    $response = Invoke-WebRequest $url -Method GET -Headers $headers -UserAgent $userAgent -UseBasicParsing
+    if ($url -notMatch '^http') {$url = $oktaBaseUrl + $url}
+    $response = Invoke-WebRequest $url -Method GET -Headers $oktaHeaders -UserAgent $oktaUserAgent -UseBasicParsing
     $links = @{}
     if ($response.Headers.Link) { # Some searches (eg List Users with Search) do not support pagination.
         foreach ($header in $response.Headers.Link.split(",")) {
@@ -312,11 +312,11 @@ function Invoke-PagedMethod($url, $convert = $true) {
 }
 
 function Invoke-OktaWebRequest($method, $path, $body) {
-    $url = $baseUrl + $path
+    $url = $oktaBaseUrl + $path
     if ($body) {
         $jsonBody = $body | ConvertTo-Json -compress -depth 100
     }
-    $response = Invoke-WebRequest $url -Method $method -Headers $headers -Body $jsonBody -UserAgent $userAgent -UseBasicParsing
+    $response = Invoke-WebRequest $url -Method $method -Headers $oktaHeaders -Body $jsonBody -UserAgent $oktaUserAgent -UseBasicParsing
     @{objects = ConvertFrom-Json $response.content
       response = $response
       limitLimit = [int][string]$response.Headers.'X-Rate-Limit-Limit'
