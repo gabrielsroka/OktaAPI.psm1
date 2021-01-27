@@ -7,7 +7,12 @@ $userAgent = ""
 
 # Call Connect-Okta before calling Okta API functions.
 function Connect-Okta($token, $baseUrl) {
-    $script:headers = @{"Authorization" = "SSWS $token"; "Accept" = "application/json"; "Content-Type" = "application/json"}
+    $script:headers = @{
+        "Authorization" = "SSWS $token"
+        "Accept" = "application/json"
+        "Accept-Encoding" = "gzip, deflate, br"
+        "Content-Type" = "application/json"
+    }
     $script:baseUrl = $baseUrl
 
     $module = Get-Module OktaAPI
@@ -34,8 +39,12 @@ function Connect-Okta($token, $baseUrl) {
 
 #region Apps - https://developer.okta.com/docs/reference/api/apps
 
-function New-OktaApp($app, $activate = $true) {
-    Invoke-Method POST "/api/v1/apps?activate=$activate" $app
+function New-OktaApp($app, $activate = $true, $page = $false) {
+    if ($page) {
+        Invoke-OktaWebRequest POST "/api/v1/apps?activate=$activate" $app
+    } else {
+        Invoke-Method POST "/api/v1/apps?activate=$activate" $app
+    }
 }
 
 function Get-OktaApp($appid) {
@@ -44,6 +53,10 @@ function Get-OktaApp($appid) {
 
 function Get-OktaApps($filter, $limit = 20, $expand, $url = "/api/v1/apps?filter=$filter&limit=$limit&expand=$expand&q=$q", $q) {
     Invoke-PagedMethod $url
+}
+
+function Set-OktaApp($appid, $app) {
+    Invoke-Method PUT "/api/v1/apps/$appid" $app
 }
 
 function Add-OktaAppUser($appid, $appuser) {
@@ -131,7 +144,7 @@ function Get-OktaGroup($id) {
     Invoke-Method GET "/api/v1/groups/$id"
 }
 
-function Get-OktaGroups($q, $filter, $limit = 200, $url = "/api/v1/groups?q=$q&filter=$filter&limit=$limit", $paged = $false) {
+function Get-OktaGroups($q, $filter, $limit = 10000, $url = "/api/v1/groups?q=$q&filter=$filter&limit=$limit&expand=$expand", $paged = $false, $expand) {
     if ($paged) {
         Invoke-PagedMethod $url
     } else {
@@ -143,7 +156,7 @@ function Remove-OktaGroup($id) {
     $null = Invoke-Method DELETE "/api/v1/groups/$id"
 }
 
-function Get-OktaGroupMember($id, $limit = 200, $url = "/api/v1/groups/$id/users?limit=$limit", $paged = $false) {
+function Get-OktaGroupMember($id, $limit = 1000, $url = "/api/v1/groups/$id/users?limit=$limit", $paged = $false) {
     if ($paged) {
         Invoke-PagedMethod $url
     } else {
@@ -191,6 +204,24 @@ function Get-OktaLogs($since, $until, $filter, $q, $sortOrder = "ASCENDING", $li
 function Get-OktaRoles($id) {
     Invoke-Method GET "/api/v1/users/$id/roles"
 }
+
+# Same as above, but better name
+function Get-OktaUserRoles($id) {
+    Invoke-Method GET "/api/v1/users/$id/roles"
+}
+
+function Get-OktaGroupRoles($id) {
+    Invoke-Method GET "/api/v1/groups/$id/roles"
+}
+
+function New-OktaUserRole($id, $role) {
+    Invoke-Method POST "/api/v1/users/$id/roles" $role
+}
+
+function New-OktaGroupRole($id, $role) {
+    Invoke-Method POST "/api/v1/groups/$id/roles" $role
+}
+
 #endregion
 
 #region Schemas - https://developer.okta.com/docs/reference/api/schemas
@@ -206,8 +237,8 @@ function Get-OktaSchemas() {
 
 #region Users - https://developer.okta.com/docs/reference/api/users
 
-function New-OktaUser($user, $activate = $true) {
-    Invoke-Method POST "/api/v1/users?activate=$activate" $user
+function New-OktaUser($user, $activate = $true, $provider = $false) {
+    Invoke-Method POST "/api/v1/users?activate=$activate&provider=$provider" $user
 }
 
 function Get-OktaUser($id) {
@@ -257,6 +288,10 @@ function Set-OktaUserUnlocked($id) {
 
 function Remove-OktaUser($id) {
     $null = Invoke-Method DELETE "/api/v1/users/$id"
+}
+
+function Remove-OktaUserSession($id) {
+    $null = Invoke-Method DELETE "/api/v1/users/$id/sessions"
 }
 #endregion
 
