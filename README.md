@@ -17,7 +17,7 @@ It assumes you are familiar with the Okta API and using REST.
 Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
 
 # Add a user to a group.
-$user = Get-OktaUser "me"
+$user = Get-OktaUser "me" # or "login" or "id"
 $group = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
 Add-OktaGroupMember $group.id $user.id
 
@@ -42,6 +42,19 @@ do {
     }
     $params = @{url = $page.nextUrl}
 } while ($page.nextUrl)
+
+# Query up to 200 users by first name, last name or email.
+$page = Get-OktaUsers -q "first name"
+$users = $page.objects
+
+# Filter lists all users; filter by status, last updated, id, login, email, first name or last name.
+$page = Get-OktaUsers -filter 'profile.firstName eq "first name"'
+$users = $page.objects # see pagination above.
+
+# Search lists all users; search by any user profile property, including custom-defined
+# properties, and id, status, created, activated, status changed and last updated.
+$page = Get-OktaUsers -search 'profile.department eq "IT"'
+$users = $page.objects # see pagination above.
 ```
 
 See [CallOktaAPI.ps1](CallOktaAPI.ps1) for more examples.
