@@ -16,6 +16,9 @@ It assumes you are familiar with the Okta API and using REST.
 # Connect to Okta. Do this before making any other calls.
 Connect-Okta "YOUR_API_TOKEN" "https://YOUR_ORG.oktapreview.com"
 
+# Show info about the current user.
+Get-OktaUser "me"
+
 # Add a user to a group.
 $user = Get-OktaUser "me" # or "login" or "id"
 $group = Get-OktaGroups "PowerShell" 'type eq "OKTA_GROUP"'
