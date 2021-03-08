@@ -99,6 +99,7 @@ Most Okta API calls come with sample `curl` commands with blocks of JSON. To con
 * Change `,` to `;` or use a line break instead
 * Change `[` to `@(`, and `]` to `)`
 * Change `true`, `false` and `null` to `$true`, `$false` and `$null`
+* Change `\"` to `` `" ``
 
 Here is an example from [Assign User to App](https://developer.okta.com/docs/reference/api/apps/#assign-user-to-application-for-sso):
 
