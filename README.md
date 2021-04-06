@@ -131,6 +131,32 @@ Here is an example from [Assign User to App](https://developer.okta.com/docs/ref
 }
 ```
 
+Or, use a [here-string](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_quoting_rules?view=powershell-7.1#here-strings) 
+along with `ConvertFrom-Json`. Note that here-strings require `@"<Enter>` and `<Enter>"@`. In the example below, `$newUser` uses a here-string:
+
+```powershell
+$id = "00ud4tVDDXYVKPXKVLCO"
+
+$oldUser = @{
+    credentials = @{
+        userName = "user@example.com"
+    }
+}
+
+$newUser = ConvertFrom-Json @"
+{
+  "id": "$id",
+  "scope": "USER",
+  "credentials": {
+    "userName": "$($oldUser.credentials.userName)",
+    "password": {
+      "value": "correcthorsebatterystaple"
+    }
+  }
+}
+"@
+```
+
 # Adding new endpoints
 To add a new endpoint, check the documentation for the [HTTP verb](https://developer.okta.com/docs/reference/api-overview/#http-verbs) (e.g. `GET`, `POST`, `PUT`, `DELETE`) and URL, and convert it into a corresponding PowerShell call.
 
