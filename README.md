@@ -79,12 +79,6 @@ CallOktaAPI.ps1 has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with yo
 [1] https://www.powershellgallery.com/packages/OktaAPI <br>
 [2] https://www.powershellgallery.com/packages/CallOktaAPI
 
-**To Install on PowerShell 4 or older**
-
-1. `$env:PSModulePath` contains a list of folders where modules are located (e.g., `C:\Users\Administrator\Documents\WindowsPowerShell\Modules`). 
-Create a new folder in a folder in your module path called OktaAPI (e.g., `C:\Users\Administrator\Documents\WindowsPowerShell\Modules\OktaAPI`).
-2. Copy OktaAPI.psm1 to the new folder: Modules\OktaAPI
-3. Copy CallOktaAPI.ps1. It has sample code. Replace `YOUR_API_TOKEN` and `YOUR_ORG` with your values or use OktaAPISettings.ps1.
 
 **Might I also suggest an IDE and debugging tools**
 
