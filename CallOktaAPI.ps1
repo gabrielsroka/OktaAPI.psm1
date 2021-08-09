@@ -236,6 +236,32 @@ function Export-Groups() {
     "$($groups.count) groups exported." 
 }
 
+function New-GroupRule() {
+    New-OktaGroupRule @{
+        type = "group_rule"
+        name = "a ps rule"
+        conditions = @{
+            people = @{
+                users = @{
+                    exclude = @()
+                }
+                groups = @{
+                    exclude = @()
+                }
+            }
+            expression = @{  
+                value = 'user.login == "abc"'
+                type = "urn:okta:expression:1.0"    
+            }
+        }
+        actions = @{
+            assignUserToGroups = @{
+                groupIds = @("00g3jzw6uzmhL2ykt297")
+            }
+        }
+    }
+}
+
 # Logs
 
 function Get-Logs() {
