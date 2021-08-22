@@ -39,6 +39,10 @@ function Add-AppUser() {
     $appuser = Add-OktaAppUser $app.id $appuser
 }
 
+# Returns App ID, App Label for all Apps assigned to the current user.
+# Example call > Get-AllMyApps
+# Okta API Documentation: https://developer.okta.com/docs/reference/api/apps/#list-applications-assigned-to-a-user
+
 function Get-AllMyApps() {
     $user = Get-OktaUser "me"
 
@@ -55,6 +59,10 @@ function Get-AllMyApps() {
     } while ($page.nextUrl)
     "$totalApps apps found."
 }
+
+# Returns the logins for all Users assigned to the App you provide the ID for.
+# Example call > Get-PagedAppUsers "0oaixymlumsJNIYHO3l6"
+# Okta API Documentation: https://developer.okta.com/docs/reference/api/apps/#list-users-assigned-to-application
 
 function Get-PagedAppUsers($appid) {
     $totalAppUsers = 0
