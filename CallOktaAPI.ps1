@@ -551,6 +551,61 @@ function Get-RateLimits() {
     }
 }
 
+#OIE Endpoints. Will not work on an Okta Classic Engine org.
+#Captchas: https://developer.okta.com/docs/reference/api/captchas/
+
+#Creates a CAPTCHA object.
+#Example invocation: New-Captcha $captchaBody
+function New-Captcha() {
+    Invoke-Method POST "/api/v1/captchas" $captchaBody
+}
+
+$captchaBody = @{name = "myReCaptcha";
+    siteKey = "copy_your_site_key";
+    secretKey = "copy_your_secret_key";
+    type = "RECAPTCHA_V2"
+}
+
+
+#Fetches a CAPTCHA object by "id".
+function Get-Captcha($captchaId) {
+    Invoke-Method GET "/api/v1/captchas/$captchaId"
+}
+
+#List all CAPTCHA objects for the org.
+function Get-Captchas() {
+    Invoke-Method GET "/api/v1/captchas"
+}
+
+#Fully updates a CAPTCHA by "id".
+function Set-Captcha($captchaId) {
+    Invoke-Method PUT "/api/v1/captchas/$captchaId" $captchaBody
+}
+
+#Permanently deletes a CAPTCHA object.
+function Remove-Captcha($captchaId) {
+    Invoke-Method DELETE "/api/v1/captchas/$captchaId"
+}
+
+#Fetch Org-wide CAPTCHA Settings.
+function Get-OrgCaptchaSettings() {
+    Invoke-Method GET "/api/v1/org/captcha"
+}
+
+#Updates Org-wide CAPTCHA Settings
+#Example invocation: Set-OrgCaptchaSettings @{orgCaptchaBody = $orgCaptchaBody}
+function Set-OrgCaptchaSettings() {
+    Invoke-Method PUT "/api/v1/org/captcha" $orgCaptchaBody
+}
+
+$orgCaptchaBody = @{captchaId = "cap19g8a5rKQQYHpq1d7";
+    enabledPages = @("SSPR"; "SIGN_IN")
+}
+
+#Permanently deletes the Org-wide CAPTCHA Settings object
+function Remove-OrgCaptchaSettings() {
+    Invoke-Method DELETE "/api/v1/org/captcha"
+}
 
 <#PSScriptInfo
 .VERSION 1.1.13
