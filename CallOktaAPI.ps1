@@ -551,6 +551,28 @@ function Get-RateLimits() {
     }
 }
 
+#OIE Endpoints. Will not work on an Okta Classic Engine org.
+#Authenticators: https://developer.okta.com/docs/reference/api/authenticators-admin/
+
+#Returns all available authenticators in your org.
+function List-Authenticators() {
+    Invoke-Method GET "/api/v1/authenticators"
+}
+
+#Returns an authenticor by ID. For example: aut13xl41eIoQrA1s1d7
+function Get-Authenticator($authenticatorId) {
+    Invoke-Method GET "/api/v1/authenticators/$authenticatorId"
+}
+
+#Activates an authenticator with a status of "INACTIVE".
+function Activate-Authenticator($authenticatorId) {
+    Invoke-Method POST "/api/v1/authenticators/$authenticatorId/lifecycle/activate"
+}
+
+#Deactivates an authenticator with a status of "ACTIVE". Authenticator must not be used in any app sign-on policies.
+function Deactivate-Authenticator($authenticatorId) {
+    Invoke-Method POST "/api/v1/authenticators/$authenticatorId/lifecycle/deactivate"
+}
 
 <#PSScriptInfo
 .VERSION 1.1.13
