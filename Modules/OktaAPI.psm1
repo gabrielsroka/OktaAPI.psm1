@@ -410,7 +410,7 @@ function Set-OktaCaptchaPartial($captchaId, $captcha) {
 }
 
 function Remove-OktaCaptcha($captchaId) {
-    Invoke-Method DELETE "/api/v1/captchas/$captchaId"
+    $null = Invoke-Method DELETE "/api/v1/captchas/$captchaId"
 }
 
 #Org-wide Captcha settings control where the end-user is prompted for Captcha: https://developer.okta.com/docs/reference/api/captchas/#org-wide-captcha-settings-operations
@@ -423,6 +423,6 @@ function Set-OktaOrgCaptchaSettings($orgCaptcha) {
 }
 
 function Remove-OktaOrgCaptchaSettings() {
-    Invoke-Method DELETE "/api/v1/org/captcha"
+    $null = Invoke-Method DELETE "/api/v1/org/captcha"
 }
 #endregion
