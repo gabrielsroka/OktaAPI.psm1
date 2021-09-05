@@ -389,8 +389,8 @@ function Disable-OktaAuthenticator($authenticatorId) {
 #endregion
 
 #region Captchas: https://developer.okta.com/docs/reference/api/captchas/
-function New-OktaCaptcha($captchaBody) {
-    Invoke-Method POST "/api/v1/captchas" $captchaBody
+function New-OktaCaptcha($captcha) {
+    Invoke-Method POST "/api/v1/captchas" $captcha
 }
 
 function Get-OktaCaptcha($captchaId) {
@@ -401,8 +401,12 @@ function Get-OktaCaptchas() {
     Invoke-Method GET "/api/v1/captchas"
 }
 
-function Set-OktaCaptcha($captchaId, $captchaBody) {
-    Invoke-Method PUT "/api/v1/captchas/$captchaId" $captchaBody
+function Set-OktaCaptchaFull($captchaId, $captcha) {
+    Invoke-Method PUT "/api/v1/captchas/$captchaId" $captcha
+}
+
+function Set-OktaCaptchaPartial($captchaId, $captcha) {
+    Invoke-Method POST "/api/v1/captchas/$captchaId" $captcha
 }
 
 function Remove-OktaCaptcha($captchaId) {
@@ -414,8 +418,8 @@ function Get-OktaOrgCaptchaSettings() {
     Invoke-Method GET "/api/v1/org/captcha"
 }
 
-function Set-OktaOrgCaptchaSettings($orgCaptchaBody) {
-    Invoke-Method PUT "/api/v1/org/captcha" $orgCaptchaBody
+function Set-OktaOrgCaptchaSettings($orgCaptcha) {
+    Invoke-Method PUT "/api/v1/org/captcha" $orgCaptcha
 }
 
 function Remove-OktaOrgCaptchaSettings() {
