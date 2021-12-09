@@ -1,4 +1,4 @@
-# updated 2021-03-12
+# updated 2021-12-08
 
 # Call Okta APIs using WebSession (cookies) and xsrfToken -- just like a browser. SSWS API Token is not needed.
 
@@ -130,9 +130,16 @@ function Get-OktaAppSignOnPoliciesHtml() {
 
                 $script:allApps += @{
                     id = $app.id
+                    created = $app.created
+                    lastUpdated = $app.lastUpdated
                     name = $app.name
                     label = $app.label
+                    postBackURL = $app.settings.app.postBackURL
+                    ssoAcsUrl = $app.settings.signOn.ssoAcsUrl
                     signOnMode = $app.signOnMode
+                    embedLinks = $app._links.appLinks.href -join '<br>'
+                    adminNotes = $app.settings.notes.admin
+                    endUserNotes = $app.settings.notes.enduser
                     policy = "<table>$policy</table>"
                 }
             }
@@ -144,7 +151,9 @@ function Get-OktaAppSignOnPoliciesHtml() {
 
     $appPolicies = @()
     foreach ($app in $script:allApps) {
-        $appPolicies += "<tr><td>$($app.id)<td>$($app.name)<td>$($app.label)<td>$($app.signOnMode)<td>$($app.policy)"
+        $appPolicies += "<tr><td>$($app.id)<td>$($app.created)<td>$($app.lastUpdated)<td>$($app.name)" +
+            "<td>$($app.label)<td>$($app.postBackURL)<td>$($app.ssoAcsUrl)<td>$($app.signOnMode)" +
+            "<td>$($app.embedLinks)<td>$($app.adminNotes)<td>$($app.endUserNotes)<td>$($app.policy)"
     }
     $html = "<html><head><title>App Sign On Policies</title><style>body {font-family: sans-serif;}`n" +
         "table {border-collapse: collapse;}`n" +
@@ -155,7 +164,8 @@ function Get-OktaAppSignOnPoliciesHtml() {
         ".policy-rule-summary-col {float: left; width: 345px;}`n" +
         ".policy-rule {border-top: 1px lightgrey solid;}</style></head>`n" +
         "<body><h1>App Sign On Policies</h1>Exported on $start<br>$($allApps.count) apps<br><br>`n" +
-        "<table><tr><th>id<th>Name<th>Label<th>Sign On Mode<th>Sign On Policy`n" + ($appPolicies -join "`n") + 
+        "<table><tr><th>id<th>Created<th>Last Updated<th>Name<th>Label<th>Post Back URL<th>SSO ACS URL" +
+            "<th>Sign On Mode<th>Embed Links<th>Admin Notes<th>End User Notes<th>Sign On Policy`n" + ($appPolicies -join "`n") + 
         "</table></body></html>"
     $html > AppSignOnPolicies.html
 }
