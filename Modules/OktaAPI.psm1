@@ -367,3 +367,62 @@ function Get-Error($_) {
     ConvertFrom-Json $responseContent
 }
 #endregion
+
+#Authenticator and Captcha manipulation available via OIE API Endpoints. Will not work on an Okta Classic Engine org.
+#region Authenticators: https://developer.okta.com/docs/reference/api/authenticators-admin/
+
+function Get-OktaAuthenticators() {
+    Invoke-Method GET "/api/v1/authenticators"
+}
+
+function Get-OktaAuthenticator($authenticatorId) {
+    Invoke-Method GET "/api/v1/authenticators/$authenticatorId"
+}
+
+function Enable-OktaAuthenticator($authenticatorId) {
+    Invoke-Method POST "/api/v1/authenticators/$authenticatorId/lifecycle/activate"
+}
+
+function Disable-OktaAuthenticator($authenticatorId) {
+    Invoke-Method POST "/api/v1/authenticators/$authenticatorId/lifecycle/deactivate"
+}
+#endregion
+
+#region Captchas: https://developer.okta.com/docs/reference/api/captchas/
+function New-OktaCaptcha($captcha) {
+    Invoke-Method POST "/api/v1/captchas" $captcha
+}
+
+function Get-OktaCaptcha($captchaId) {
+    Invoke-Method GET "/api/v1/captchas/$captchaId"
+}
+
+function Get-OktaCaptchas() {
+    Invoke-Method GET "/api/v1/captchas"
+}
+
+function Set-OktaCaptchaFull($captchaId, $captcha) {
+    Invoke-Method PUT "/api/v1/captchas/$captchaId" $captcha
+}
+
+function Set-OktaCaptchaPartial($captchaId, $captcha) {
+    Invoke-Method POST "/api/v1/captchas/$captchaId" $captcha
+}
+
+function Remove-OktaCaptcha($captchaId) {
+    $null = Invoke-Method DELETE "/api/v1/captchas/$captchaId"
+}
+
+#Org-wide Captcha settings control where the end-user is prompted for Captcha: https://developer.okta.com/docs/reference/api/captchas/#org-wide-captcha-settings-operations
+function Get-OktaOrgCaptchaSettings() {
+    Invoke-Method GET "/api/v1/org/captcha"
+}
+
+function Set-OktaOrgCaptchaSettings($orgCaptcha) {
+    Invoke-Method PUT "/api/v1/org/captcha" $orgCaptcha
+}
+
+function Remove-OktaOrgCaptchaSettings() {
+    $null = Invoke-Method DELETE "/api/v1/org/captcha"
+}
+#endregion
