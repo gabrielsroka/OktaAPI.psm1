@@ -500,6 +500,10 @@ function Remove-UsersBasedOnGroupMembership($groupId) {
     } while ($page.nextUrl)
     "$totalUsers users deleted."
 }
+# Revokes Given Okta User's session and logs the user out of Okta immedetly.
+function Remove-OktaUserSession($id) {
+    $null = Invoke-Method DELETE "/api/v1/users/$id/sessions"
+}
 
 # Zones
 
