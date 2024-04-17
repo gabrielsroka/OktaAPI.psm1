@@ -551,6 +551,45 @@ function Get-RateLimits() {
     }
 }
 
+#Captchas
+
+function New-Captcha() {
+    $captcha = @{
+        name = "myReCaptcha"
+        siteKey = "copy_your_site_key"
+        secretKey = "copy_your_secret_key"
+        type = "RECAPTCHA_V2"
+    }
+    New-OktaCaptcha $captcha
+}
+
+function Set-CaptchaFull($captchaId) {
+    $captcha = @{
+        name = "myreCAPTCHA"
+        siteKey = "copy_your_site_key"
+        secretKey = "copy_your_secret_key"
+        type = "RECAPTCHA_V2"
+    }
+    Set-OktaCaptchaFull $captchaId $captcha
+}
+
+function Set-CaptchaPartial($captchaId) {
+    $captcha = @{
+        name = "myreCAPTCHA"
+        siteKey = "copy_your_site_key"
+        secretKey = "copy_your_secret_key"
+        type = "RECAPTCHA_V2"
+    }
+    Set-OktaCaptchaPartial $captchaId $captcha
+}
+
+function Set-OrgCaptchaSettings() {
+    $orgCaptcha = @{
+        captchaId = "cap1bmhee3dAadrDP1d7"
+        enabledPages = @("SSPR", "SIGN_IN")
+    }
+    Set-OktaOrgCaptchaSettings $orgCaptcha
+}
 
 <#PSScriptInfo
 .VERSION 1.1.13
