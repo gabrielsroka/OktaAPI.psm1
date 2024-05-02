@@ -58,11 +58,31 @@ $users = $page.objects # see pagination above.
 # properties, and id, status, created, activated, status changed and last updated.
 $page = Get-OktaUsers -search 'profile.department eq "IT"'
 $users = $page.objects # see pagination above.
+
+#Retrieve the full list of active and inactive authenticators in your org.
+Get-OktaAuthenticators
+
+#If there is no org captcha, you can create one by passing in the relevant parameters.
+function New-Captcha() {
+    $captcha = @{
+        name = "myReCaptcha"
+        siteKey = "copy_your_site_key"
+        secretKey = "copy_your_secret_key"
+        type = "RECAPTCHA_V2"
+    }
+    New-OktaCaptcha $captcha
+}
+
+New-Captcha
+
+#Retrieve the org-wide settings that will indicate which page(s) the CAPTCHA is enabled for (sign-in, self-service registration, or self-service password recovery).
+Get-OktaOrgCaptchaSettings
+#
 ```
 
 See [CallOktaAPI.ps1](CallOktaAPI.ps1) for more examples.
 
-There are functions for Apps, Events, Factors, Groups, IdPs, Logs, Roles, Schemas, Users and Zones. And you can [add your own](#adding-new-endpoints).
+There are functions for Apps, Events, Factors, Groups, IdPs, Logs, Roles, Schemas, Users, and Zones. There are also functions for Authenticators and CAPTCHAs that are OIE-exclusive. And you can [add your own](#adding-new-endpoints).
 
 # Installation
 To determine which version of PowerShell you're running, see PSVersion under `$PSVersionTable`.
